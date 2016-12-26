@@ -2,6 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+// modificación en linea
 package combate;
 
 import sub.TTropas;
