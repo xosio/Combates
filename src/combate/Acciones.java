@@ -35,7 +35,7 @@ public class Acciones {
     protected boolean victoriadefensor = false;
 
     protected boolean aniquilaataca = false;
-    protected boolean aniquiladefensor = false;
+    protected boolean aniquiladefensor = true;
 
     protected boolean huyeataca = false;
     protected boolean huyedefensor = false;

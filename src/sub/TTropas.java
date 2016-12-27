@@ -16,14 +16,14 @@ public enum TTropas {
     //TIPO DE TROPAS (Capcidad trasporte,unidad de consumo diaria,capacidad transporte oros, aniquilable)
     //Capacidad de transporte en libras. 
     
-    CAMPESINOS(4,1,0, true),
-    LEVAS(10,1,0, true),
-    SOLDADOS(5,1,50, true),
-    ARQUEROS(5,1,50, true),
-    LANCEROS(5,1,50,true),
-    JINETES(20,2,50,true),
-    CABALLEROS(9,3,100,true),
-    CARRETAS(1800,4,1800,false);
+    CAMPESINOS(4,1,0, true, true),
+    LEVAS(10,1,0, true, true),
+    SOLDADOS(5,1,50, true, true),
+    ARQUEROS(5,1,50, true, true),
+    LANCEROS(5,1,50,true, true),
+    JINETES(20,2,50,true, false),
+    CABALLEROS(9,3,100,true, false),
+    CARRETAS(1800,4,1800,false, false);
     //A añadir: ballesteros, torres de asedio, arietes...
    
     
@@ -32,13 +32,15 @@ public enum TTropas {
     private final int consumo;
     private final int oros;
     private final boolean aniquilables;
+    private final boolean apie;
     
-    TTropas(int transporte, int consumo, int oros, boolean aniquilable) {
+    TTropas(int transporte, int consumo, int oros, boolean aniquilable, boolean apie) {
         //this.poder=poder;
         this.transporte=transporte;
         this.consumo=consumo;
         this.oros=oros;
         this.aniquilables=aniquilable;
+        this.apie=apie;
     }
     
     /*public  double  getPoder() {
@@ -57,6 +59,10 @@ public enum TTropas {
         return aniquilables;
     }
     
+    public boolean isApie()
+    {
+        return apie;
+    }
     
     //Devuelve la carga maxima de oros: EN oros !!!!!!!!!!!!!!!!
     //Y por que no pongo directamente 180.000 oros....????

@@ -42,20 +42,26 @@ public class Contienda {
             case "CONQUISTAR":
                 this.accion = new Acciones();
                 accion.setOperacion("CONQUISTAR");
+                break;
             case "SAQUEAR":
                 this.accion = new Acciones();
+                break;
             case "ATACAR":
                 this.accion = new AccionSaqueo();
                 accion.setOperacion("ATACAR");
+                break;
             case "ARRASAR":
                 this.accion = new AccionArrasar();
+                break;
             case "ASEDIAR":
                 //No implementado
                 this.accion = null;
+                break;
             case "ASALTAR":
                 //No implementado
                 this.accion = new Acciones();
-                accion.setOperacion("ASALTAR");;
+                accion.setOperacion("ASALTAR");
+                break;               
         }
 
         //Mes....
@@ -111,17 +117,19 @@ public class Contienda {
         switch (accion.getOperacion()) {
             case "ATACAR":
                 //Ataque
-
+                System.out.println("Atacar");
                 p = p.enFeudo(feudo);
                 accion.atacar(ataca, defiende, p);
                 //escribeBajas();
                 break;
 
             case "ASALTAR":
+                System.out.println("Asaltar");
                 //Sin implementar
                 break;
 
             case "ASEDIAR":
+                System.out.println("Asediar");
                 //Sin implementar
                 //Boceto
                 //Solo se podrá asediar en feudos con propietario y edificio...
@@ -139,6 +147,7 @@ public class Contienda {
                 break;
             //CONQUISTAR, ARRASAR y SAQUEAR...
             default:
+                System.out.println(accion.getOperacion());
                 if (!feudo.isConpropietario()) {
                     //Feudo libre-> CombateconCampesinos;
                     //Opciones disponibles. En caso de atacar, arrasar o saquear
@@ -151,7 +160,7 @@ public class Contienda {
                     if (conTropasCombate(defiende)) {
                         //Hay tropas defensivas (con capacidad de combatir)...
                         TEdificio edificio = feudo.getEdificio();
-                        if (edificio.equals(TEdificio.NADA)) {
+                        if (!edificio.equals(TEdificio.NADA)) {
                             //Hay edificio
                             p = p.enFeudo(feudo);
                             accion.atacar(ataca, defiende, p);
@@ -161,14 +170,15 @@ public class Contienda {
                                 //Las unidades guarnecidas no salen a luchar/defender
                                 if (accion.getOperacion().equals("CONQUISTAR")) {
                                     //Añadir mensaje en reporte conquista, el feudo no se puede conquistar.
-                                    reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio");
+                                    reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos");
                                     return reporte;
                                 }
-                                //Si el edificio es castillo o superior no se puede saquear
+                                //Si el edificio es castillo, fortaleza o ciudad no se puede saquear
+                                //Falta añadir la condición de ciudad.
                                 if ((accion.getOperacion().equals("SAQUEAR")) && ((edificio == TEdificio.CASTILLO) || (edificio == TEdificio.FORTALEZA))) {
-                                    reporte.setMensajes("No se pueden saquear los feudo con castillos o fortalezas");
+                                    reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos y sus propiedades");
                                     return reporte;
-                                }
+                                }                               
                                 //Enfrentamiento con los campesinos. Arrasar o saquear en feudo con TORRES o SIN EDIFICIO
                                 accion.operacionSinTropas(ataca, feudo, culturaagresor);
                                 return reporte;
@@ -176,9 +186,10 @@ public class Contienda {
                             } else {
                                 //Las unidades guarnecidas salen a luchar, pues repelen el ataque
                                 //escribeBajas();
+                                System.out.println("Nuestras unidades repelen el ataque");
                                 return reporte;
                             }
-                        } else {
+                        } else {System.out.println("No hay edificio");
                             //No hay edificio:
                             //Feudo con propietario y con tropas (Tropas defensivas. ¿Que pasa si hay tropas, pero no defensivas. Carretas, torres de asalto....
                             {
@@ -194,7 +205,7 @@ public class Contienda {
                                 }
                             }
                         }
-                    } else {
+                    } else {System.out.println("No hay tropas");
                         //No hay tropas
                         //Feudo con propietario sin tropas.
                         //Igual que antes. Las tropas que no hay son de combate...
@@ -222,9 +233,10 @@ public class Contienda {
         for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             TropasK u = elemento.getValue();
-            double poder;
-            poder = grupo.getDefensaD(tipotropa, p);
-            if (poder > 0) {
+            
+            double poder= grupo.getDefensaD(tipotropa, p)*grupo.getCantidadTipoTropa(tipotropa);
+
+            if (poder > 0.0) {
                 return true;
             }
         }

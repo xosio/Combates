@@ -200,7 +200,6 @@ public class GrupoTropas {
 
     double getDefensaD(TTropas tipotropa, pCombateK p) {
         //Multiplicamos la pericia, la moral y el poder de defensa en el terreno
-        
         if (unidad.containsKey(tipotropa)) {
             TropasK tr=unidad.get(tipotropa);
             return tr.getPoder()*p.defensaDefiende(tipotropa);
@@ -231,7 +230,7 @@ public class GrupoTropas {
     }
     
     
-    public int poderArrase(){
+    public int poderSaqueo(){
         
         int poder=0;
         
@@ -245,7 +244,52 @@ public class GrupoTropas {
         }  
         return poder;
     }
-
+//___________________________Arrasar____________________________________________________
+    
+    /*
+        public int carga() {
+        int carga = 0;
+        
+         for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            TropasK u = elemento.getValue();
+            carga=carga+u.getcargaviveres();
+        } 
+        return carga;
+    
+    
+    }
+    */
+    
+    public int poderArrase(int mes){
+        
+        int poder=0;
+        
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            TTropas tipotropa = elemento.getKey();
+            TropasK u = elemento.getValue();
+            //El poder de arrase no está implementado en TTropas. De momento esto para pruebas..
+            int podertipo=tipotropa.getTransporte();
+            int cantidad=u.getcantidad();
+            poder=poder+podertipo*cantidad;
+        }  
+        return poder;
+    }
+    
+    public boolean hayUnidadesApie()
+    {
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            TropasK u = elemento.getValue();
+            if(u.getcantidad()>0){
+                TTropas tipotropa = elemento.getKey();
+                if(tipotropa.isApie()){
+                    return true;
+                } 
+            }
+        }  
+        return false;
+    }
+    
+    
     void print() {
         System.out.println("Unidades");
           for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {

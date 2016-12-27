@@ -44,7 +44,7 @@ public class Combate {
         int campesinos = 80;
         int satisfaccion = 2;
         int producidomansos = 84000;
-        int producidoreserva = 0;
+        int producidoreserva = 500;
         int arados = 0;
         TCultura tcultura = TCultura.CRISTIANOS;
         TFeudo tfeudo = TFeudo.LLANO;
@@ -52,7 +52,7 @@ public class Combate {
         TEdificio niveledificio = TEdificio.CASTILLO;
 
         //Los ponemos todo en un objeto FeudosK
-        FeudoK feudo = new FeudoK(poblacion, campesinos, satisfaccion, producidomansos, producidoreserva, arados, tcultura, tfeudo, conpropietario, niveledificio);
+        FeudoK feudo = new FeudoK(poblacion, campesinos, satisfaccion, producidomansos, producidoreserva, arados, tcultura, tfeudo, conpropietario, niveledificio,mes);
 
         //Cultura del agresor. Objeto de tipo TTCultura
         TCultura culturaagresor = TCultura.CRISTIANOS;
@@ -82,8 +82,9 @@ public class Combate {
         //at.set(3,100, 100, 100);
 
         //TropasK no necesita tener la propiedad TTropas. Pero de momento está
-        TropasK trat3A = new TropasK(TTropas.LANCEROS, 100, 100, 100);
-
+        TropasK trat1A = new TropasK(TTropas.CABALLEROS, 00, 100, 100);
+        grupoat.put(TTropas.CABALLEROS, trat1A);
+        TropasK trat3A = new TropasK(TTropas.LANCEROS, 1000, 100, 100);
         grupoat.put(TTropas.LANCEROS, trat3A);
         //at.set(4,000,100,100);
         //at.set(5, 00, 100, 100);
@@ -99,18 +100,19 @@ public class Combate {
 
         //at1.set(0,00,100,100);
         //def.set(1,50, 100, 100);
-        TropasK tr1def = new TropasK(TTropas.CABALLEROS, 100, 100, 100);
+        TropasK tr1def = new TropasK(TTropas.CABALLEROS, 00, 100, 100);
         grupodef.put(TTropas.CABALLEROS, tr1def);
         //at.set(2,100,100,100);
-        TropasK tr2def = new TropasK(TTropas.JINETES, 100, 100, 100);
+        TropasK tr2def = new TropasK(TTropas.JINETES, 0, 100, 100);
         grupodef.put(TTropas.JINETES, tr2def);
         //at.set(3, 0, 100, 100);
         //at.set(4,000,100,100);
         //at.set(5, 0, 100, 100);
 
         GrupoTropas def = new GrupoTropas(grupodef, false, false);
-
-       
+        
+        
+     
         //Ejecutamos la contienda...
         Contienda c = new Contienda(at, def, feudo, accion, culturaagresor, mes);
 
@@ -121,6 +123,7 @@ public class Combate {
          * *************** RESULTADO
          * *******************************************************
          */
+        
         System.out.println("Tropas que atacan");
         at.print();
         

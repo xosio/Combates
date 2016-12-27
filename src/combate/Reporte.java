@@ -46,6 +46,9 @@ public class Reporte {
     //Informa acerca de si la accion ha tendio exito
     private boolean exito = false;
     private String mensajes; //Para poner, en su caso, explicaciones de lo que ha pasado....
+    
+    private int reservaarrasada;
+    private int mansosarrasados;
 
     public Reporte() {
     }
@@ -59,6 +62,23 @@ public class Reporte {
      * ************* Métodos getter y
      * setter**************************************
      */
+    public void setMansosarrasados(int cantidad)
+    {
+        this.mansosarrasados=cantidad;
+    }
+    public int getMansosarrasados()
+    {
+        return mansosarrasados;
+    }
+    
+    public void setReservaarrasada(int cantidad)
+    {
+        this.reservaarrasada=cantidad;
+    }
+    public int getReservaarrasada()
+    {
+        return reservaarrasada;
+    }
     public void setMensajes(String mensajes) {
         this.mensajes = mensajes;
     }
