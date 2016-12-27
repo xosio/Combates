@@ -42,20 +42,26 @@ public class Contienda {
             case "CONQUISTAR":
                 this.accion = new Acciones();
                 accion.setOperacion("CONQUISTAR");
+                break;
             case "SAQUEAR":
                 this.accion = new Acciones();
+                break;
             case "ATACAR":
                 this.accion = new AccionSaqueo();
                 accion.setOperacion("ATACAR");
+                break;
             case "ARRASAR":
                 this.accion = new AccionArrasar();
+                break;
             case "ASEDIAR":
                 //No implementado
                 this.accion = null;
+                break;
             case "ASALTAR":
                 //No implementado
                 this.accion = new Acciones();
-                accion.setOperacion("ASALTAR");;
+                accion.setOperacion("ASALTAR");
+                break; //He tenido que añadir los break porque se metía siempre en este
         }
 
         //Mes....
@@ -151,7 +157,7 @@ public class Contienda {
                     if (conTropasCombate(defiende)) {
                         //Hay tropas defensivas (con capacidad de combatir)...
                         TEdificio edificio = feudo.getEdificio();
-                        if (edificio.equals(TEdificio.NADA)) {
+                        if (!edificio.equals(TEdificio.NADA)) {
                             //Hay edificio
                             p = p.enFeudo(feudo);
                             accion.atacar(ataca, defiende, p);
@@ -223,7 +229,8 @@ public class Contienda {
             TTropas tipotropa = elemento.getKey();
             TropasK u = elemento.getValue();
             double poder;
-            poder = grupo.getDefensaD(tipotropa, p);
+            poder = grupo.getDefensaD(tipotropa, p)*grupo.getCantidadTipoTropa(tipotropa);
+            //Getdefensa fuede ser distinto de cero y que la cantidad de tropas sea cero.
             if (poder > 0) {
                 return true;
             }
