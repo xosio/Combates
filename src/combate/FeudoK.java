@@ -128,16 +128,16 @@ public class FeudoK {
         double variacion = 1.0;
         switch (satisfaccion) {
             case 0:
-                variacion =1.0+ Math.random() * 0.5;
+                variacion =3.0+ Math.random() * 0.5;
                 break;
             case 1:
-                variacion = 1.0 + Math.random() * 0.2;
+                variacion = 2.0 + Math.random() * 0.5;
                 break;
             case 2:
-                variacion = 0.8 + Math.random() * 0.2;
+                variacion = 1.0 + Math.random() * 0.3;
                 break;
             case 3:
-                variacion = 0.4 + Math.random() * 0.4;
+                variacion = 0.5 + Math.random() * 0.2;
                 break;
             default:
                 return 1.0;
@@ -167,8 +167,8 @@ public class FeudoK {
         //Obtenemos el consumo correspondiente
         int consumo=poblacion*acosechas*31;
         
-        //Calculamos los campesinos molestos en porcentaje
-        int campis=(int)(Math.round(satisfaccionArrase()*campesinos*2.0*((double)(consumo-arrasado))/(double)(consumo)));
+        //Calculamos los campesinos molestos
+        int campis=(int)(Math.round(satisfaccionArrase()*campesinos*((double)(consumo-arrasado))/(double)(consumo)));
        
         return  Math.min(campesinos, campis);
     }

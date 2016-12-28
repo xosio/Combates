@@ -164,43 +164,51 @@ public class Contienda {
                             //Hay edificio
                             p = p.enFeudo(feudo);
                             accion.atacar(ataca, defiende, p);
+                            
                             //Comprobamos si las unidades guarnecidas salen a luchar
-                            //if ((aux.getmoverdefensor()) || (aux.gethuyedefensor()) || (aux.getdefensoraniquilado())) {
                             if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
                                 //Las unidades guarnecidas no salen a luchar/defender
                                 if (accion.getOperacion().equals("CONQUISTAR")) {
-                                    //Añadir mensaje en reporte conquista, el feudo no se puede conquistar.
                                     reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos");
+                                    reporte.setExito(false);
                                     return reporte;
                                 }
                                 //Si el edificio es castillo, fortaleza o ciudad no se puede saquear
                                 //Falta añadir la condición de ciudad.
                                 if ((accion.getOperacion().equals("SAQUEAR")) && ((edificio == TEdificio.CASTILLO) || (edificio == TEdificio.FORTALEZA))) {
                                     reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos y sus propiedades");
+                                    reporte.setExito(false);
                                     return reporte;
                                 }                               
-                                //Enfrentamiento con los campesinos. Arrasar o saquear en feudo con TORRES o SIN EDIFICIO
+                                //Enfrentamiento con los campesinos. Arrasar o saquear en feudo con TORRE
+                                reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio");
                                 accion.operacionSinTropas(ataca, feudo, culturaagresor);
                                 return reporte;
 
                             } else {
                                 //Las unidades guarnecidas salen a luchar, pues repelen el ataque
-                                //escribeBajas();
+                                accion.escribeBajas(reporte);
+                                reporte.setExito(false);
                                 System.out.println("Nuestras unidades repelen el ataque");
                                 return reporte;
                             }
                         } else {System.out.println("No hay edificio");
                             //No hay edificio:
-                            //Feudo con propietario y con tropas (Tropas defensivas. ¿Que pasa si hay tropas, pero no defensivas. Carretas, torres de asalto....
+                            //Feudo con propietario y con tropas defensivas. 
+//¿Que pasa si hay tropas, pero no defensivas. Carretas, torres de asalto....?
+//Pues si es conquistar o arrasar las ignoran y si es saqueo las capturan.
                             {
                                 p = p.enFeudo(feudo);
                                 accion.atacar(ataca, defiende, p);
-                                //if ((reporte.getmoverdefensor()) || (reporte.gethuyedefensor()) || (reporte.getdefensoraniquilado())) {
+                                accion.escribeBajas(reporte);
+                                //Comprobamos si las tropas agresoras continúan
                                 if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
                                     accion.operacionSinTropas(ataca, feudo, culturaagresor);
                                     return reporte;
                                 } else {
-                                    //Las unidades repelen a los enemigos   
+                                    //Las unidades repelen a los enemigos
+                                    System.out.println("Nuestras unidades repelen el ataque");
+                                    reporte.setExito(false);
                                     return reporte;
                                 }
                             }
@@ -218,6 +226,8 @@ public class Contienda {
 
         }
         //Terminar de escribir el reporte con los datos de accion..
+        accion.completaReporte(reporte);
+        
         return reporte;
     }
 
@@ -243,25 +253,26 @@ public class Contienda {
         return false;
     }
 
+    //Mejor en acciones ¿no?
     //Pone en el reporte las bajas que se producen como resultado de los combates.
     //Lo dicho con las aniquilaciones.
     /*
-     public void escribeBajas() {
-     //Atacantes...
-     for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
-     TTropas tipotropas = elemento.getKey();
-     double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
-     int bajasAi = redondea(poderBajasAi);
-     reporte.ponBajasatacante(tipotropas, bajasAi);
-     }
+     public void escribeBajas(Reporte reporte) {
+        //Atacantes...
+        for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
+        TTropas tipotropas = elemento.getKey();
+        double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
+        int bajasAi = redondea(poderBajasAi);
+        reporte.ponBajasatacante(tipotropas, bajasAi);
+        }
 
-     //Defensores...
-     for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
-     TTropas tipotropas = elemento.getKey();
-     double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
-     int bajasDi = redondea(poderBajasDi);
-     reporte.ponBajasDefensor(tipotropas, bajasDi);
-     }
-     }
-     */
+        //Defensores...
+        for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
+        TTropas tipotropas = elemento.getKey();
+        double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
+        int bajasDi = redondea(poderBajasDi);
+        reporte.ponBajasDefensor(tipotropas, bajasDi);
+        }
+     }*/
+     
 }

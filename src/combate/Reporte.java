@@ -18,6 +18,8 @@ public class Reporte {
 
     protected String terreno; //El terreno ya lo sabemos. No tednría que estar en el reporte
     protected GrupoTropas defiende; //Idem
+    
+    protected String accion;
 
     protected int[] bajasatacante = new int[ntropas]; //Las bajas las implementamos con maps
     protected int[] bajasdefensor = new int[ntropas]; //Idemn
@@ -45,7 +47,7 @@ public class Reporte {
 
     //Informa acerca de si la accion ha tendio exito
     private boolean exito = false;
-    private String mensajes; //Para poner, en su caso, explicaciones de lo que ha pasado....
+    private String mensajes=null; //Para poner, en su caso, explicaciones de lo que ha pasado....
     
     private int reservaarrasada;
     private int mansosarrasados;
@@ -266,6 +268,13 @@ public class Reporte {
     public boolean getvictoriadefensor() {
         return victoriadefensor;
     }
+    
+    public void setVictoriasobrecampis(boolean victoriasobrecampis) {
+        this.victoriasobrecampis = victoriasobrecampis;
+    }
+    public boolean getVictoriasobrecampis() {
+        return victoriasobrecampis;
+    }
 
     /**
      * ************* Funciones *****************
@@ -281,35 +290,83 @@ public class Reporte {
     /**
      * ************Para Borrar***************************
      */
-    void print() {
-
-        System.out.println("Victoria actacante: " + victoriaatacante);
-        System.out.println("Mueve atacante: " + moveratacante);
-        System.out.println("Aniquila atacante: " + atacanteaniquilado);
+    //Mensaje para el atacante
+    void printAccion() {
         
-        System.out.println("*******");
-        System.out.println("Victoria defensor: " + victoriadefensor);
-        System.out.println("Mueve defensor: " + moverdefensor);
-        System.out.println("Aniquila defensor: " + defensoraniquilado);
-
-        System.out.println("*******");
-        
-        System.out.println("Bajas del grupo atacante");
+        if(mensajes!=null)
+        {
+            System.out.println("Mi señor, no hemos podido realizar la acción que nos encomendaste porque "+mensajes);
+            return;
+        }
+        if(!exito){
+            System.out.println("Mi señor nuestras unidades han sido rechazadas por los defensores");
+            print();    
+        }
+        else{
+            System.out.println("Mi señor hemos "+ accion+ "las siguientes cantidades:");
+            System.out.println(reservaarrasada+" víveres de la reserva.");
+            
+            if(victoriasobrecampis){
+                System.out.println(mansosarrasados+" víveres de los mansos.");
+            }
+            //Habría que comprobar si hay bajas para imprimirlas
+            print();
+        }
+    }
+    void print()
+    {
+        if(victoriaatacante){
+            System.out.println("Al enfrentarnos a nuestros enemigos hemos obtenido la victoria.");
+        }
+        else
+        {
+            if(atacanteaniquilado){
+                System.out.println("Nuestras unidades han sido completamente aniquiladas.");
+            }
+            else{
+                if(moveratacante){
+                System.out.println("Nuestras unidades se retiran hacia posiciones más seguras.");
+                }
+                else{
+                    if(huyeatacante){
+                        System.out.println("Nuestras unidades huyen en desbandada.");
+                    }
+                    else{
+                        System.out.println("Hemos sido derrotados.");
+                    }
+                }
+            }       
+        }
+        System.out.println("Teniendo las siguientes bajas: ");
 
         for (Map.Entry<TTropas, Integer> elemento : bajasatacanteX.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             int cantidad = elemento.getValue();
+            if(cantidad>0){
             System.out.println("Se han producido " + cantidad + " bajas de " + tipotropa);
+            }
         }
-
-        System.out.println("Bajas del grupo defensor");
+/****************************Pasamos al defensor*********************************************/
         
+        System.out.println("Causando las siguientes bajas entre las filas enemigas: ");
+  
         for (Map.Entry<TTropas, Integer> elemento : bajasdefensorX.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             int cantidad = elemento.getValue();
+            if(cantidad>0){
             System.out.println("Se han producido " + cantidad + " bajas de " + tipotropa);
+            }
         }
-
+        
+         if(defensoraniquilado){
+                System.out.println("Las unidades enemigas han sido completamente aniquiladas.");
+         }
+         if(moverdefensor){
+                System.out.println("Las unidades enemigas se retiran hacia posiciones más seguras.");
+         }
+         if(huyeatacante){
+                System.out.println("Las unidades enemigas huyen en desbandada.");
+         }    
     }
 
 }

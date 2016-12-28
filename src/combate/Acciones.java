@@ -35,7 +35,7 @@ public class Acciones {
     protected boolean victoriadefensor = false;
 
     protected boolean aniquilaataca = false;
-    protected boolean aniquiladefensor = true;
+    protected boolean aniquiladefensor = false;
 
     protected boolean huyeataca = false;
     protected boolean huyedefensor = false;
@@ -43,6 +43,8 @@ public class Acciones {
     protected boolean mueveataca = false;
     protected boolean muevedefensor = false;
 
+    protected boolean huyecampesinos=false;
+    protected boolean accionrepelida=false;
     //Resultado de la accion
     protected boolean exito = false;
 
@@ -68,6 +70,10 @@ public class Acciones {
     public String getOperacion() {
         return operacion;
     }
+    public boolean getExito()
+    {
+        return exito;
+    }
 
     /**
      * Ataque de tropas "ataca" sobre tropas "defiende" en el terreno/lugar p.
@@ -76,6 +82,7 @@ public class Acciones {
      * @param ataca GrupoTropas que atacan
      * @param defiende GrupoTropas que dedienden
      * @param p Modificadores de poder en función del terreno/lugar donde se
+     * @param auxiliar nos indica si la acción atacar es el cuerpo del programa o es una acción auxiliar
      * realiza la accion de ataca. pCombateK
      */
     public void atacar(GrupoTropas ataca, GrupoTropas defiende, pCombateK p) {
@@ -83,6 +90,14 @@ public class Acciones {
          * ******* Variables e
          * inicializaciones**********************************
          */
+        //Necesito reiniciarlas, porque se puede llamar varias veces a la función
+        // atacar e ir sobreescribiendo datos ficticios.
+         bajasA = new HashMap(); 
+         bajasD = new HashMap();
+         aniquiladefensor = false;
+         muevedefensor = false;
+         huyedefensor = false;
+         
         double penalizacionDe = 1.0;//Guarda las penalizaciones correspondientes al grupo que defiende
         double penalizacionAt = 1.0;//Guarda las penalizaciones correspondientes al grupo que ataca
 
@@ -188,7 +203,10 @@ public class Acciones {
                         double fa = p.fuerzaAtaca(tipotropa); //p.fuerzaAtaca(i)
                         double da = ataca.getPoderTipoTropa(tipotropa) * p.defensaAtaca(tipotropa); //ataca.getDefensaA(i,p)
                         int bajas = redondea(0.2 * auxD * cantidad * fa / da);
-                        ponBajasAtacante(tipotropa, bajas);
+                        
+                        ponBajas(bajasA, tipotropa, bajas);
+                        
+                        
                     }
                 }
                 //Y aniquilamos al defensor. 
@@ -227,7 +245,9 @@ public class Acciones {
                         double fa = p.fuerzaDefiende(tipotropa);
                         double da = defiende.getPoderTipoTropa(tipotropa) * p.fuerzaDefiende(tipotropa);
                         int bajas = redondea(0.2 * auxD * cantidad * fa / da);
-                        ponBajasDefensor(tipotropa, bajas);
+                        
+                        ponBajas(bajasD, tipotropa, bajas);
+                        
                     }
                 }
                 //Idem. No escribo las bajas del atacante. Ya se sabe que son todas...
@@ -290,7 +310,9 @@ public class Acciones {
             TTropas tipotropas = elemento.getKey();
             double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
             int bajasAi = redondea(poderBajasAi);
-            ponBajasAtacante(tipotropas, bajasAi);
+            
+            ponBajas(bajasA, tipotropas, bajasAi);
+            
         }
 
         //Defensores...
@@ -298,7 +320,8 @@ public class Acciones {
             TTropas tipotropas = elemento.getKey();
             double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
             int bajasDi = redondea(poderBajasDi);
-            ponBajasDefensor(tipotropas, bajasDi);
+            
+            ponBajas(bajasD, tipotropas, bajasDi);          
         }
     }
 
@@ -315,7 +338,29 @@ public class Acciones {
         }
         return sol + 1;
     }
+    //Función que completa el reporte con los datos necesarios
+    public void completaReporte(Reporte reporte)
+    {
+        
+    }
+    //Función que escribe las bajas en el reporte y resetea las ya existentes
+    public void escribeBajas(Reporte reporte) {/*
+        //Atacantes...
+        for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
+        TTropas tipotropas = elemento.getKey();
+        double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
+        int bajasAi = redondea(poderBajasAi);
+        reporte.ponBajasatacante(tipotropas, bajasAi);
+        }
 
+        //Defensores...
+        for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
+        TTropas tipotropas = elemento.getKey();
+        double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
+        int bajasDi = redondea(poderBajasDi);
+        reporte.ponBajasDefensor(tipotropas, bajasDi);
+        }*/
+     }
     /**
      *
      * Pone en el parámetro MAP poderBajas la bonificación para cada tipo de
@@ -408,7 +453,15 @@ public class Acciones {
         }
         return false;
     }
-
+    //Igual pero genérico.
+    private void ponBajas(Map<TTropas, Integer> bajas, TTropas tr, int cantidad)
+    {
+        if (bajas.containsKey(tr)) {
+            int bj = bajas.get(tr);
+            cantidad = bj + cantidad;
+        }
+        bajas.put(tr, cantidad);
+    }
     private void ponBajasAtacante(TTropas tr, int bajas) {
         if (bajasA.containsKey(tr)) {
             int bj = bajasA.get(tr);
