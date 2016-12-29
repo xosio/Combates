@@ -267,8 +267,7 @@ public class GrupoTropas {
         for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             TropasK u = elemento.getValue();
-            //El poder de arrase no está implementado en TTropas. De momento esto para pruebas..
-            int podertipo=tipotropa.getTransporte();
+            int podertipo=tipotropa.getPoderarrasar();
             int cantidad=u.getcantidad();
             poder=poder+podertipo*cantidad;
         }  

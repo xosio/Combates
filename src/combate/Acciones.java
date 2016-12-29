@@ -33,6 +33,7 @@ public class Acciones {
     //Resultados de la accion sobre las tropas
     protected boolean victoriataca = false;
     protected boolean victoriadefensor = false;
+    protected boolean victoriasobrecampis = false;
 
     protected boolean aniquilaataca = false;
     protected boolean aniquiladefensor = false;
@@ -42,12 +43,14 @@ public class Acciones {
 
     protected boolean mueveataca = false;
     protected boolean muevedefensor = false;
-
-    protected boolean huyecampesinos=false;
-    protected boolean accionrepelida=false;
+   
     //Resultado de la accion
     protected boolean exito = false;
-
+    //True si hay lucha contra las unidades defensivas.
+    //False si no hay lucha contra las unidades defensivas
+    protected String mensaje1=null;
+    protected  String mensaje2=null;
+    protected  String mensaje3=null;
     //Operacion
     protected String operacion;
 
@@ -70,7 +73,8 @@ public class Acciones {
     public String getOperacion() {
         return operacion;
     }
-    public boolean getExito()
+    //Creo que no hace falta
+    /*public boolean getExito()
     {
         return exito;
     }
@@ -167,15 +171,18 @@ public class Acciones {
         for (Map.Entry<TTropas, Double> elemento : poderA.entrySet()) {
             double poderAi = elemento.getValue();
             poderAt = poderAt + poderAi;
+            System.out.println("Poder ataque "+poderAi);
         }
-
+System.out.println("Poder ataque "+poderAt);
         //Del defensor:
         for (Map.Entry<TTropas, Double> elemento : poderD.entrySet()) {
             //TTropas tipotropa = elemento.getKey(); poderD puede ser un Lista ???
             double poderDi = elemento.getValue();
             poderDe = poderDe + poderDi;
+            System.out.println("Poder defiende "+ poderDi);
         }
 
+System.out.println("Poder defiende "+ poderDe);
         //Obtenemos las condiciones de victoria
         double auxA = poderAt / (poderAt + poderDe);
         double auxD = poderDe / (poderAt + poderDe);
@@ -239,6 +246,7 @@ public class Acciones {
 
                 for (Map.Entry<TTropas, Double> elemento : poderD.entrySet()) {
                     double poderDi = elemento.getValue();
+ System.out.println(poderDi);
                     if (poderDi > 0) {
                         TTropas tipotropa = elemento.getKey();
                         int cantidad = defiende.getCantidadTipoTropa(tipotropa);
@@ -247,6 +255,7 @@ public class Acciones {
                         int bajas = redondea(0.2 * auxD * cantidad * fa / da);
                         
                         ponBajas(bajasD, tipotropa, bajas);
+System.out.println(bajasD);
                         
                     }
                 }
@@ -341,7 +350,19 @@ public class Acciones {
     //Función que completa el reporte con los datos necesarios
     public void completaReporte(Reporte reporte)
     {
+        reporte.setVictoriaatacante(victoriataca);
+        reporte.setVictoriadefensor(victoriadefensor);
         
+        reporte.setMoverdefensor(muevedefensor);
+        reporte.setMoveratacante(mueveataca);
+
+        reporte.setHuyedefensor(huyedefensor);
+        reporte.setHuyeatacante(huyeataca);
+        
+        reporte.setAtacanteaniquilado(aniquilaataca);
+        reporte.setDefensoraniquilado(aniquiladefensor);
+    
+        escribeBajas(reporte);
     }
     //Función que escribe las bajas en el reporte y resetea las ya existentes
     public void escribeBajas(Reporte reporte) {/*

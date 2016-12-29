@@ -18,7 +18,7 @@ import sub.TTropas;
 public class AccionArrasar extends Acciones{
     private int reservaarrasada;
     private int mansosarrasados;
-    private String mensaje;
+    
     
      public AccionArrasar() {
         operacion = "ARRASAR";
@@ -44,37 +44,33 @@ public class AccionArrasar extends Acciones{
             
             if (muevedefensor || huyedefensor || aniquiladefensor) { 
              //Los campesinos huyen despaVoridos :), realizamos la operación
-                huyecampesinos=true;
-                exito=true;
+                victoriasobrecampis=true;
                 operacion(ataca,feudo,true);
-                System.out.println("Arrasan los mansos");
                 return;
             } 
-            System.out.println("No pueden con los campesinos");
-            
+            mensaje3="los campesinos han repelido nuestro ataque";    
         }
     }
 
     @Override
     public void operacionSinTropas(GrupoTropas ataca, FeudoK feudo, TCultura culturaagresor) {
         //Comprobamos si hay algo que arrasar
-        if(pCombateK.ALDEA.getarrasemes(feudo.getMes())==0)
+        if(pCombateK.ALDEA.getarrasemes(feudo.getMes())==0.0)
         {
-            mensaje="No hay nada que arrasar, los campos están totalmente desiertos";
+            mensaje1="No hay nada que arrasar, los campos están totalmente desiertos";
             return;
         }
-        //Comprobamos que hay unidades con poder de arrasar (unidades a pie)
+        //Comprobamos que hay unidades con poder para arrasar (unidades a pie)
         if(!ataca.hayUnidadesApie())
         {
-            mensaje="Nuestras unidades consideran humillante realizar esta acción";
+            mensaje1="Nuestras unidades consideran humillante realizar esta acción";
             return;
         }
         //Primero ejecutamos la operación en las propiedades del señor
         double porcentaje = operacion(ataca, feudo, false);
-        System.out.println("Arrasan las reservas");
         
         //Comprobamos si las unidades pueden seguir actuando
-        if (porcentaje != 0){System.out.println("Continuan con los mansos");
+        if (porcentaje != 0){
             //Actualizamos la cantidad de tropas que siguen con la operación
             GrupoTropas aux = siguenTropas(ataca, porcentaje);
             //Intervienen los campesinos en el proceso para defender sus posesiones
@@ -112,16 +108,14 @@ public class AccionArrasar extends Acciones{
     public void completaReporte(Reporte reporte)
     {
         reporte.setReservaarrasada(reservaarrasada);
-        if(exito)//Las tropas llegan a las propiedades de los campesinos
+        reporte.setMansosarrasados(mansosarrasados);
+        reporte.setVictoriasobrecampis(victoriasobrecampis);
+        reporte.setMensaje1(mensaje1);
+        reporte.setMensaje2(mensaje2);
+        reporte.setMensaje3(mensaje3); 
+        if(mensaje3!=null)
         {
-            reporte.setMansosarrasados(mansosarrasados);
-            reporte.setVictoriasobrecampis(true);
-        }
-        else{//Las tropas acaban en las propiedades del señor o son derrotadas por los campesinos
-            if(!huyecampesinos)
-            {
-                escribeBajas(reporte);
-            }
+            escribeBajas(reporte);
         }
     }
     
@@ -149,12 +143,4 @@ public class AccionArrasar extends Acciones{
         return reservaarrasada;
     }
     
-    public String getMensaje()
-    {
-        return mensaje;
-    }
-    public void setMensaje(String mensaje)
-    {
-        this.mensaje=mensaje;
-    }
 }

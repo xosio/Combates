@@ -37,7 +37,7 @@ public class Combate {
         String accion = "ARRASAR";
 
         //Mes en el que se produce el ataque. Solo se emplea con la acción arrsar
-        int mes = 3;
+        int mes = 9;
 
         //Datos feudo. Poner en FeudosK
         int poblacion = 400;
@@ -82,7 +82,7 @@ public class Combate {
         //at.set(3,100, 100, 100);
 
         //TropasK no necesita tener la propiedad TTropas. Pero de momento está
-        TropasK trat1A = new TropasK(TTropas.CABALLEROS, 00, 100, 100);
+        TropasK trat1A = new TropasK(TTropas.CABALLEROS, 100, 100, 100);
         grupoat.put(TTropas.CABALLEROS, trat1A);
         TropasK trat3A = new TropasK(TTropas.LANCEROS, 1000, 100, 100);
         grupoat.put(TTropas.LANCEROS, trat3A);
@@ -100,10 +100,10 @@ public class Combate {
 
         //at1.set(0,00,100,100);
         //def.set(1,50, 100, 100);
-        TropasK tr1def = new TropasK(TTropas.CABALLEROS, 00, 100, 100);
+        TropasK tr1def = new TropasK(TTropas.CABALLEROS, 0, 100, 100);
         grupodef.put(TTropas.CABALLEROS, tr1def);
         //at.set(2,100,100,100);
-        TropasK tr2def = new TropasK(TTropas.JINETES, 0, 100, 100);
+        TropasK tr2def = new TropasK(TTropas.JINETES, 10, 100, 100);
         grupodef.put(TTropas.JINETES, tr2def);
         //at.set(3, 0, 100, 100);
         //at.set(4,000,100,100);
@@ -114,15 +114,16 @@ public class Combate {
         
      
         //Ejecutamos la contienda...
-        Contienda c = new Contienda(at, def, feudo, accion, culturaagresor, mes);
+        Contienda c = new Contienda(at, def, feudo, "ATACAR", culturaagresor, mes);
 
         //Y cojemos el informe de resultados...
         Reporte reporte = c.reporte();
+        reporte.print();
 
         /**
          * *************** RESULTADO
          * *******************************************************
-         */
+         *
         
         System.out.println("Tropas que atacan");
         at.print();
@@ -132,7 +133,7 @@ public class Combate {
         
         System.out.println("Resultado de la acción " + accion);
         reporte.print();
-
+        */
     }
 
 }

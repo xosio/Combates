@@ -118,9 +118,15 @@ public class Contienda {
             case "ATACAR":
                 //Ataque
                 System.out.println("Atacar");
-                p = p.enFeudo(feudo);
-                accion.atacar(ataca, defiende, p);
-                //escribeBajas();
+                //Comprobamos que los enemigos tienen tropas aniquilables
+                if(conTropasCombate(defiende))
+                {
+                    p = p.enFeudo(feudo);
+                    accion.atacar(ataca, defiende, p);
+                }else
+                {
+                    reporte.setMensaje1("El grupo enemigo no tiene tropas que ofrezcan resistencia");
+                }
                 break;
 
             case "ASALTAR":
@@ -147,7 +153,6 @@ public class Contienda {
                 break;
             //CONQUISTAR, ARRASAR y SAQUEAR...
             default:
-                System.out.println(accion.getOperacion());
                 if (!feudo.isConpropietario()) {
                     //Feudo libre-> CombateconCampesinos;
                     //Opciones disponibles. En caso de atacar, arrasar o saquear
@@ -169,61 +174,53 @@ public class Contienda {
                             if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
                                 //Las unidades guarnecidas no salen a luchar/defender
                                 if (accion.getOperacion().equals("CONQUISTAR")) {
-                                    reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos");
-                                    reporte.setExito(false);
+                                    reporte.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos");
                                     return reporte;
                                 }
                                 //Si el edificio es castillo, fortaleza o ciudad no se puede saquear
                                 //Falta añadir la condición de ciudad.
                                 if ((accion.getOperacion().equals("SAQUEAR")) && ((edificio == TEdificio.CASTILLO) || (edificio == TEdificio.FORTALEZA))) {
-                                    reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos y sus propiedades");
-                                    reporte.setExito(false);
+                                    reporte.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos y sus propiedades");
                                     return reporte;
                                 }                               
                                 //Enfrentamiento con los campesinos. Arrasar o saquear en feudo con TORRE
-                                reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio");
+                                reporte.setMensaje2("las cobardes tropas enemigas se han refugiado en el edificio");
                                 accion.operacionSinTropas(ataca, feudo, culturaagresor);
-                                return reporte;
 
                             } else {
                                 //Las unidades guarnecidas salen a luchar, pues repelen el ataque
                                 accion.escribeBajas(reporte);
-                                reporte.setExito(false);
-                                System.out.println("Nuestras unidades repelen el ataque");
-                                return reporte;
+                                reporte.setExito(true);
+                                reporte.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra orden");
                             }
-                        } else {System.out.println("No hay edificio");
+                        } else {
                             //No hay edificio:
                             //Feudo con propietario y con tropas defensivas. 
 //¿Que pasa si hay tropas, pero no defensivas. Carretas, torres de asalto....?
 //Pues si es conquistar o arrasar las ignoran y si es saqueo las capturan.
-                            {
-                                p = p.enFeudo(feudo);
-                                accion.atacar(ataca, defiende, p);
-                                accion.escribeBajas(reporte);
-                                //Comprobamos si las tropas agresoras continúan
-                                if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
+                            reporte.setExito(true);
+                            p = p.enFeudo(feudo);
+                            accion.atacar(ataca, defiende, p);
+                            accion.escribeBajas(reporte);
+                            //Comprobamos si las tropas agresoras continúan
+                            if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
                                     accion.operacionSinTropas(ataca, feudo, culturaagresor);
-                                    return reporte;
-                                } else {
+                            } else {
                                     //Las unidades repelen a los enemigos
-                                    System.out.println("Nuestras unidades repelen el ataque");
-                                    reporte.setExito(false);
+                                    reporte.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra orden");
                                     return reporte;
-                                }
                             }
-                        }
+                       }              
                     } else {System.out.println("No hay tropas");
                         //No hay tropas
                         //Feudo con propietario sin tropas.
                         //Igual que antes. Las tropas que no hay son de combate...
 
                         accion.operacionSinTropas(ataca, feudo, culturaagresor);
-                        return reporte;
                         //¿Sublebar feudo?   
                     }
                 }
-
+                break;
         }
         //Terminar de escribir el reporte con los datos de accion..
         accion.completaReporte(reporte);

@@ -16,14 +16,14 @@ public enum TTropas {
     //TIPO DE TROPAS (Capcidad trasporte,unidad de consumo diaria,capacidad transporte oros, aniquilable)
     //Capacidad de transporte en libras. 
     
-    CAMPESINOS(4,1,0, true, true),
-    LEVAS(10,1,0, true, true),
-    SOLDADOS(5,1,50, true, true),
-    ARQUEROS(5,1,50, true, true),
-    LANCEROS(5,1,50,true, true),
-    JINETES(20,2,50,true, false),
-    CABALLEROS(9,3,100,true, false),
-    CARRETAS(1800,4,1800,false, false);
+    CAMPESINOS(4,1,0, true, true,0),
+    LEVAS(10,1,0, true, true,3),
+    SOLDADOS(5,1,50, true, true,10),
+    ARQUEROS(5,1,50, true, true,3),
+    LANCEROS(5,1,50,true, true,5),
+    JINETES(20,2,50,true, false,0),
+    CABALLEROS(9,3,100,true, false,0),
+    CARRETAS(1800,4,1800,false, false,0);
     //A añadir: ballesteros, torres de asedio, arietes...
    
     
@@ -33,20 +33,25 @@ public enum TTropas {
     private final int oros;
     private final boolean aniquilables;
     private final boolean apie;
+    private final int poderarrasar;
     
-    TTropas(int transporte, int consumo, int oros, boolean aniquilable, boolean apie) {
+    TTropas(int transporte, int consumo, int oros, boolean aniquilable, boolean apie, int poderarrasar) {
         //this.poder=poder;
         this.transporte=transporte;
         this.consumo=consumo;
         this.oros=oros;
         this.aniquilables=aniquilable;
         this.apie=apie;
+        this.poderarrasar=poderarrasar;
     }
-    
+     
     /*public  double  getPoder() {
         return poder;
     }*/
-
+    public int getPoderarrasar()
+    {
+        return poderarrasar;
+    }
     public  int getTransporte() {
         return transporte;
     }
