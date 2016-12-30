@@ -48,7 +48,8 @@ public class AccionArrasar extends Acciones{
                 operacion(ataca,feudo,true);
                 return;
             } 
-            mensaje3="los campesinos han repelido nuestro ataque";    
+            mensaje3="los campesinos han repelido nuestro ataque"; 
+            return;
         }
         operacion(ataca,feudo,true);
     }

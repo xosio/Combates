@@ -347,6 +347,10 @@ public class Reporte {
                     print();
                     return;
                 }
+                if(mensaje3!=null)//Los campesinos repelen el ataque
+                {
+                    System.out.println("Pero "+mensaje3);
+                }
                 //Imprimo el combate con las bajas conjuntas tanto si han luchado
                 // solo contra las tropas defensivas como si han luchado también contra los campis.
                 print();
@@ -431,7 +435,7 @@ public class Reporte {
          if(moverdefensor){
                 System.out.println("Las unidades enemigas se retiran hacia posiciones más seguras.");
          }
-         if(huyeatacante){
+         if(huyedefensor){
                 System.out.println("Las unidades enemigas huyen en desbandada.");
          }    
     }

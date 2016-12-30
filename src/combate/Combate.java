@@ -84,7 +84,7 @@ public class Combate {
         //TropasK no necesita tener la propiedad TTropas. Pero de momento está
         TropasK trat1A = new TropasK(TTropas.CABALLEROS, 00, 100, 100);
         grupoat.put(TTropas.CABALLEROS, trat1A);
-        TropasK trat3A = new TropasK(TTropas.LANCEROS, 100, 100, 100);
+        TropasK trat3A = new TropasK(TTropas.LANCEROS, 80, 100, 100);
         grupoat.put(TTropas.LANCEROS, trat3A);
         //at.set(4,000,100,100);
         //at.set(5, 00, 100, 100);
@@ -105,7 +105,7 @@ public class Combate {
         //at.set(2,100,100,100);
         TropasK tr2def = new TropasK(TTropas.JINETES, 0, 100, 100);
         grupodef.put(TTropas.JINETES, tr2def);
-        TropasK trat3def = new TropasK(TTropas.LANCEROS, 00, 100, 100);
+        TropasK trat3def = new TropasK(TTropas.LANCEROS, 24, 100, 100);
         grupodef.put(TTropas.LANCEROS, trat3def);
         //at.set(3, 0, 100, 100);
         //at.set(4,000,100,100);
@@ -117,11 +117,13 @@ public class Combate {
      
         //Ejecutamos la contienda...
         Contienda c = new Contienda(at, def, feudo, accion, culturaagresor, mes);
+        Contienda d = new Contienda(at, def, feudo, "ATACAR", culturaagresor, mes);
 
         //Y cojemos el informe de resultados...
         Reporte reporte = c.reporte();
         reporte.printArrasar();
-        //reporte.print();
+        Reporte reporte1 = d.reporte();
+        reporte1.print();
         /**
          * *************** RESULTADO
          * *******************************************************
