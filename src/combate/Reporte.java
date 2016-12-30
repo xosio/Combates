@@ -309,7 +309,7 @@ public class Reporte {
         else{
             if(mensaje2!=null)//La acción ha fracasado o no se puede realizar en las propiedades del señor
             {
-                System.out.print("Mi señor, siguiendo vuestras ordenes hemos ARRASADO el feudo "+coordenadas+" pero ");
+                System.out.print("Mi señor, siguiendo vuestras órdenes hemos ARRASADO el feudo "+coordenadas+" ");
                 if(exito)//Las unidades defensivas repelen el ataque
                 {
                     System.out.println(mensaje2);
@@ -338,7 +338,7 @@ public class Reporte {
                 }    
             }
             //No hay edificio
-            System.out.println("Mi señor, siguiendo vuestras ordenes hemos ARRASADO el feudo "+coordenadas+" :");
+            System.out.println("Mi señor, siguiendo vuestras órdenes hemos ARRASADO el feudo "+coordenadas+" :");
             if(exito)//Hay lucha con las unidades defensivas
             {
                 if(mensaje2!=null)//Las unidades defensivas repelen el ataque

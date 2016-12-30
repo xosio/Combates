@@ -168,7 +168,7 @@ public class FeudoK {
         int consumo=poblacion*acosechas*31;
         
         //Calculamos los campesinos molestos
-        int campis=(int)(Math.round(satisfaccionArrase()*campesinos*((double)(consumo-arrasado))/(double)(consumo)));
+        int campis=(int)(Math.round(satisfaccionArrase()*campesinos*((double)(arrasado))/(double)(consumo)));
        
         return  Math.min(campesinos, campis);
     }

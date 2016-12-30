@@ -50,6 +50,7 @@ public class AccionArrasar extends Acciones{
             } 
             mensaje3="los campesinos han repelido nuestro ataque";    
         }
+        operacion(ataca,feudo,true);
     }
 
     @Override
@@ -107,9 +108,17 @@ public class AccionArrasar extends Acciones{
     //Función que completa el reporte con los datos necesarios
     public void completaReporte(Reporte reporte)
     {
+        reporte.setVictoriaatacante(victoriataca);
+        reporte.setAtacanteaniquilado(aniquilaataca);
+        reporte.setDefensoraniquilado(aniquiladefensor);
+        reporte.setHuyeatacante(huyeataca);
+        reporte.setHuyedefensor(huyedefensor);
+        reporte.setMoveratacante(mueveataca);
+        reporte.setMoverdefensor(muevedefensor);
         reporte.setReservaarrasada(reservaarrasada);
         reporte.setMansosarrasados(mansosarrasados);
         reporte.setVictoriasobrecampis(victoriasobrecampis);
+        reporte.setExito(exito);
         reporte.setMensaje1(mensaje1);
         reporte.setMensaje2(mensaje2);
         reporte.setMensaje3(mensaje3); 

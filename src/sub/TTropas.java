@@ -17,10 +17,10 @@ public enum TTropas {
     //Capacidad de transporte en libras. 
     
     CAMPESINOS(4,1,0, true, true,0),
-    LEVAS(10,1,0, true, true,3),
-    SOLDADOS(5,1,50, true, true,10),
-    ARQUEROS(5,1,50, true, true,3),
-    LANCEROS(5,1,50,true, true,5),
+    LEVAS(10,1,0, true, true,300),
+    SOLDADOS(5,1,50, true, true,3000),
+    ARQUEROS(5,1,50, true, true,1000),
+    LANCEROS(5,1,50,true, true,1000),
     JINETES(20,2,50,true, false,0),
     CABALLEROS(9,3,100,true, false,0),
     CARRETAS(1800,4,1800,false, false,0);

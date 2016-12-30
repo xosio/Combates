@@ -170,7 +170,7 @@ public enum pCombateK {
                 return 0.5;
         }
     }
-
+    //Nos da el tipo de unidades que bonifica a @param tr según el tipo de terreno.
     List<TTropas> getubonificadora(TTropas tr) {
         List<TTropas> ubonificadora;
         ubonificadora = new ArrayList();

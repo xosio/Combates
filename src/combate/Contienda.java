@@ -174,31 +174,31 @@ public class Contienda {
                             if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
                                 //Las unidades guarnecidas no salen a luchar/defender
                                 if (accion.getOperacion().equals("CONQUISTAR")) {
-                                    reporte.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos");
+                                    accion.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos");
                                     return reporte;
                                 }
                                 //Si el edificio es castillo, fortaleza o ciudad no se puede saquear
                                 //Falta añadir la condición de ciudad.
                                 if ((accion.getOperacion().equals("SAQUEAR")) && ((edificio == TEdificio.CASTILLO) || (edificio == TEdificio.FORTALEZA))) {
-                                    reporte.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos y sus propiedades");
+                                    accion.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos y sus propiedades");
                                     return reporte;
                                 }                               
                                 //Enfrentamiento con los campesinos. Arrasar o saquear en feudo con TORRE
-                                reporte.setMensaje2("las cobardes tropas enemigas se han refugiado en el edificio");
+                                accion.setMensaje2("mientras las cobardes tropas enemigas se han refugiado en el edificio");
                                 accion.operacionSinTropas(ataca, feudo, culturaagresor);
 
                             } else {
                                 //Las unidades guarnecidas salen a luchar, pues repelen el ataque
                                 accion.escribeBajas(reporte);
-                                reporte.setExito(true);
-                                reporte.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra orden");
+                                accion.setExito(true);
+                                accion.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra misión");
                             }
                         } else {
                             //No hay edificio:
                             //Feudo con propietario y con tropas defensivas. 
 //¿Que pasa si hay tropas, pero no defensivas. Carretas, torres de asalto....?
 //Pues si es conquistar o arrasar las ignoran y si es saqueo las capturan.
-                            reporte.setExito(true);
+                            accion.setExito(true);
                             p = p.enFeudo(feudo);
                             accion.atacar(ataca, defiende, p);
                             accion.escribeBajas(reporte);
@@ -207,7 +207,7 @@ public class Contienda {
                                     accion.operacionSinTropas(ataca, feudo, culturaagresor);
                             } else {
                                     //Las unidades repelen a los enemigos
-                                    reporte.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra orden");
+                                    accion.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra orden");
                                     return reporte;
                             }
                        }              
@@ -224,7 +224,6 @@ public class Contienda {
         }
         //Terminar de escribir el reporte con los datos de accion..
         accion.completaReporte(reporte);
-        
         return reporte;
     }
 

@@ -73,10 +73,19 @@ public class Acciones {
     public String getOperacion() {
         return operacion;
     }
-    //Creo que no hace falta
-    /*public boolean getExito()
+    public void setMensaje1(String mensajes) {
+        this.mensaje1 = mensajes;
+    }
+    public void setMensaje2(String mensajes) {
+        this.mensaje2 = mensajes;
+    }
+    public void setMensaje3(String mensajes) {
+        this.mensaje3 = mensajes;
+    }
+    
+    public void setExito(boolean exito)
     {
-        return exito;
+        this.exito=exito;
     }
 
     /**
@@ -125,28 +134,30 @@ public class Acciones {
         Map<TTropas, Double> poderA = ataca.getPoderUnidadesAX(p);
 
         //Tropas de defensa:
-        Map<TTropas, Double> poderD = ataca.getPoderUnidadesDX(p);
+        Map<TTropas, Double> poderD = defiende.getPoderUnidadesDX(p);
 
         /*Obtenemos el poder de las bonificaciones correspondientes a cada tipo de unidad  
          * El poder obtenido lo guardamos de forma proporcional al número de unidades
          * en el lugar donde causan las bajas, en poderBajas. Es decir, si enfrento caballeros en ataque
          * contra soldados en defensa, el poder de la bonificación lo guardo en poderBajas[5] ya que es 
          * donde se causan las bajas.
-         */
+         */   
         //Bonificaciones de las Tropas que atacan
         Map<TTropas, TropasK> atacantes = ataca.getUnidad();
         for (Map.Entry<TTropas, TropasK> elemento : atacantes.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             TropasK u = elemento.getValue();
-
-            if (p.bonifica(tipotropa)) { //Si el tipo de tropas tiene bonificacion en el terreno/lugar p
-
-                List<TTropas> aux1 = p.getubonificadora(tipotropa); //Obtenemos una lista aux con el tipo de tropas sobre las que tiene bonificación
-                if (poderA.containsKey(tipotropa)) {  //Si el tipo tropa tiene poder ???
-                    if ((poderA.get(tipotropa) > 0.0) && (bonificable(aux1, poderD))) {
-                        bonificacion(tipotropa, u, aux1, defiende, poderBajasD); //??? bonificamos y ponemos los datos en poderBajasD...
-                    }
-                }
+            //Si las tropas tienen poder y éstas tienen bonificacion en el terreno/lugar p
+            if ((p.bonifica(tipotropa))&&(poderA.get(tipotropa) > 0.0)) { 
+                //Obtenemos una lista aux con el tipo de tropas sobre las que tiene bonificación
+                List<TTropas> aux1 = p.getubonificadora(tipotropa); 
+                //Esta comprobación no sirve, pues el valor 0 también es un valor.           
+                //if (poderA.containsKey(tipotropa)) {  //Si el tipo tropa tiene poder>0
+                    //if  (bonificable(aux1, poderD)) {
+                //bonificamos y ponemos los datos en poderBajasD...
+                bonificacion(tipotropa, u,poderA.get(tipotropa), aux1, defiende, poderBajasD); 
+                    //}
+                //}
             }
         }
 
@@ -155,65 +166,55 @@ public class Acciones {
         for (Map.Entry<TTropas, TropasK> elemento : defensores.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             TropasK u = elemento.getValue();
-
-            if (p.bonifica(tipotropa)) {
+            //Si las tropas tienen poder y éstas tienen bonificacion en el terreno/lugar p
+            if ((p.bonifica(tipotropa))&&(poderD.get(tipotropa) > 0.0)) {
                 List<TTropas> aux1 = p.getubonificadora(tipotropa);
-                if (poderA.containsKey(tipotropa)) {
-                    if ((poderD.get(tipotropa) > 0.0) && (bonificable(aux1, poderA))) {
-                        bonificacion(tipotropa, u, aux1, ataca, poderBajasA);
-                    }
-                }
+                //if (poderA.containsKey(tipotropa)) {
+                  //  if (bonificable(aux1, poderA)) {
+                //bonificamos y ponemos los datos en poderBajasA...
+                bonificacion(tipotropa, u,poderD.get(tipotropa), aux1, ataca, poderBajasA);
+                    //}
+                //}
             }
         }
-
         //Sumamos el poder de ataque de las unidades 
         //Del atacante:
         for (Map.Entry<TTropas, Double> elemento : poderA.entrySet()) {
             double poderAi = elemento.getValue();
             poderAt = poderAt + poderAi;
-            System.out.println("Poder ataque "+poderAi);
         }
-System.out.println("Poder ataque "+poderAt);
         //Del defensor:
         for (Map.Entry<TTropas, Double> elemento : poderD.entrySet()) {
             //TTropas tipotropa = elemento.getKey(); poderD puede ser un Lista ???
             double poderDi = elemento.getValue();
             poderDe = poderDe + poderDi;
-            System.out.println("Poder defiende "+ poderDi);
         }
 
-System.out.println("Poder defiende "+ poderDe);
         //Obtenemos las condiciones de victoria
         double auxA = poderAt / (poderAt + poderDe);
         double auxD = poderDe / (poderAt + poderDe);
 
-        //Guardamos las condiciones de victoria en el reporte
+        //Guardamos las condiciones de victoria
         if (poderAt > poderDe) {
             //Gana el atacante
             victoriataca = true;
-
             if (auxD <= 0.02) {
                 aniquiladefensor = true;
 
                 for (Map.Entry<TTropas, Double> elemento : poderA.entrySet()) {
                     double poderAi = elemento.getValue();
-                    /*
-                     Original:
-                     if(poderA[i]>0)
-                     {
+                    /* Original:
+                     if(poderA[i]>0){
                      reporte.setbajasatacante(redondea(0.2*auxD*ataca.get(i).getcantidad()*p.fuerzaAtaca(i) /ataca.getDefensaA(i,p)),i);
-                     } 
-                     */
-                    if (poderAi > 0) {
+                     } */
+                    if (poderAi > 0.0) {
                         TTropas tipotropa = elemento.getKey();
                         int cantidad = ataca.getCantidadTipoTropa(tipotropa); //ataca.get(i).getcantidad()
                         double fa = p.fuerzaAtaca(tipotropa); //p.fuerzaAtaca(i)
                         double da = ataca.getPoderTipoTropa(tipotropa) * p.defensaAtaca(tipotropa); //ataca.getDefensaA(i,p)
                         int bajas = redondea(0.2 * auxD * cantidad * fa / da);
                         
-                        ponBajas(bajasA, tipotropa, bajas);
-                        
-                        
+                        ponBajas(bajasA, tipotropa, bajas);   
                     }
                 }
                 //Y aniquilamos al defensor. 
@@ -238,7 +239,7 @@ System.out.println("Poder defiende "+ poderDe);
                 }
             }
         } else {
-            //Gana el grupo que defiende, en caso de empoate le damos la ventaja al defensor
+            //Gana el grupo que defiende, en caso de empate le damos la ventaja al defensor
             victoriadefensor = true;
             if (auxA <= 0.02) {
                 //Aniquilación de Atacante
@@ -246,17 +247,14 @@ System.out.println("Poder defiende "+ poderDe);
 
                 for (Map.Entry<TTropas, Double> elemento : poderD.entrySet()) {
                     double poderDi = elemento.getValue();
- System.out.println(poderDi);
-                    if (poderDi > 0) {
+                    if (poderDi > 0.0) {
                         TTropas tipotropa = elemento.getKey();
                         int cantidad = defiende.getCantidadTipoTropa(tipotropa);
                         double fa = p.fuerzaDefiende(tipotropa);
                         double da = defiende.getPoderTipoTropa(tipotropa) * p.fuerzaDefiende(tipotropa);
                         int bajas = redondea(0.2 * auxD * cantidad * fa / da);
                         
-                        ponBajas(bajasD, tipotropa, bajas);
-System.out.println(bajasD);
-                        
+                        ponBajas(bajasD, tipotropa, bajas);                       
                     }
                 }
                 //Idem. No escribo las bajas del atacante. Ya se sabe que son todas...
@@ -279,7 +277,7 @@ System.out.println(bajasD);
          * victoria***************************************************
          */
         //En caso de combate más o menos igualado repartimos las bajas
-        if ((auxD >= 0.4) && (auxD <= 0.6)) {
+        if ((auxD >= 0.45) && (auxD <= 0.55)) {
             rba = p.getbajasempate();
             rbd = p.getbajasempate();
         } else {
@@ -291,46 +289,65 @@ System.out.println(bajasD);
                 rbd = p.getbajasvictoria();
             }
         }
-
         /**
          * ************************* Calculamos las bajas
          * *******************************
          */
         //Calculamos el poder de las bajas de cada bando
         //Atacantes...
-        for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
+
+        for (Map.Entry<TTropas, Double> elemento : poderA.entrySet()) {
             TTropas tipotropas = elemento.getKey();
             double poderAi = elemento.getValue();
-            double poderBajas = poderA.get(tipotropas) + poderAi / (poderAi + poderA.get(tipotropas) + auxD) * rba;
+
+            double poderBajas=0.0;
+            if(poderBajasA.containsKey(tipotropas)){
+                poderBajas= poderAi*(poderBajasA.get(tipotropas)/(poderBajasA.get(tipotropas)+poderAi)+auxD)*rba;
+                //double poderBajas = poderA.get(tipotropas) + poderAi / (poderAi + poderA.get(tipotropas) + auxD) * rba;
+            }
+            else{
+                poderBajas= poderAi*auxD*rba;
+            }
             poderBajasA.put(tipotropas, poderBajas);
 
         }
-
         //Defensores...
-        for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
+        for (Map.Entry<TTropas, Double> elemento : poderD.entrySet()) {
             TTropas tipotropas = elemento.getKey();
             double poderDi = elemento.getValue();
-            double poderBajas = poderD.get(tipotropas) + poderDi / (poderDi + poderD.get(tipotropas) + auxA) * rbd;
+            double poderBajas=0.0;
+            if(poderBajasD.containsKey(tipotropas)){
+                poderBajas= poderDi*(poderBajasD.get(tipotropas)/(poderBajasD.get(tipotropas)+poderDi)+auxA)*rbd;
+                //double poderBaja = poderBajasD.get(tipotropas) + poderDi / (poderDi + poderD.get(tipotropas) + auxA) * rbd;
+            }
+            else{
+                poderBajas= poderDi*auxA*rbd;
+            }
             poderBajasD.put(tipotropas, poderBajas);
         }
-
+        
+        //Obtenemos las bajas
         //Atacantes...
         for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
-            TTropas tipotropas = elemento.getKey();
-            double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
-            int bajasAi = redondea(poderBajasAi);
-            
-            ponBajas(bajasA, tipotropas, bajasAi);
-            
+            //Necesito esta comprobación porque si no pone 1 baja cuando debería ser cero
+            if(elemento.getValue()>0.0){
+                TTropas tipotropas = elemento.getKey();
+                double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
+                int bajasAi = redondea(poderBajasAi);
+        
+                ponBajas(bajasA, tipotropas, bajasAi);
+            }
         }
 
         //Defensores...
         for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
-            TTropas tipotropas = elemento.getKey();
-            double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
-            int bajasDi = redondea(poderBajasDi);
-            
-            ponBajas(bajasD, tipotropas, bajasDi);          
+            if(elemento.getValue()>0.0){
+                TTropas tipotropas = elemento.getKey();
+                double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
+                int bajasDi = redondea(poderBajasDi);
+
+                ponBajas(bajasD, tipotropas, bajasDi);  
+            }
         }
     }
 
@@ -364,23 +381,16 @@ System.out.println(bajasD);
     
         escribeBajas(reporte);
     }
-    //Función que escribe las bajas en el reporte y resetea las ya existentes
-    public void escribeBajas(Reporte reporte) {/*
+    //Función que escribe las bajas en el reporte 
+    public void escribeBajas(Reporte reporte) {
         //Atacantes...
-        for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
-        TTropas tipotropas = elemento.getKey();
-        double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
-        int bajasAi = redondea(poderBajasAi);
-        reporte.ponBajasatacante(tipotropas, bajasAi);
+        for (Map.Entry<TTropas, Integer> elemento : bajasA.entrySet()) {
+        reporte.ponBajasatacante(elemento.getKey(), elemento.getValue());
         }
-
         //Defensores...
-        for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
-        TTropas tipotropas = elemento.getKey();
-        double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
-        int bajasDi = redondea(poderBajasDi);
-        reporte.ponBajasDefensor(tipotropas, bajasDi);
-        }*/
+        for (Map.Entry<TTropas, Integer> elemento : bajasD.entrySet()) {
+        reporte.ponBajasDefensor(elemento.getKey(), elemento.getValue());
+        }
      }
     /**
      *
@@ -396,7 +406,7 @@ System.out.println(bajasD);
      * @param poderBajas Map donde se van a guardar los resultados...
      *
      */
-    private void bonificacion(TTropas tipotropa, TropasK unidad, List<TTropas> uBonificadoras, GrupoTropas enemigas, Map<TTropas, Double> poderBajas) {
+    private void bonificacion(TTropas tipotropa, TropasK unidad, double poder, List<TTropas> uBonificadoras, GrupoTropas enemigas, Map<TTropas, Double> poderBajas) {
         //Obtenemos el número de unidades bonificadoras
 
         int n = 0;
@@ -407,10 +417,14 @@ System.out.println(bajasD);
             }
             n = n + cantidad;
         }
-
+        //Al no utilizar la función bonificable tengo que comprobar si realmente hay unidades.
+        if(n==0){
+            return;
+        }
         //Obtenemos la proporción de la unidad bonificada sobre las bonificadoras.
         double proporcion = (double) unidad.getcantidad() / (double) (n);
         double bonificacion = 0.0;
+        double poderbonificado=0.0;
 
         switch (tipotropa) {
             case ARQUEROS: //Bonificación para los arqueros contra lanceros y levas
@@ -431,30 +445,24 @@ System.out.println(bajasD);
             default:
                 break;
         }
-
-        double poder = unidad.getPoder();
-
+        //double poder = unidad.getPoder(); //Este poder es falso, solo nos da pericia*moral
         System.out.println("Proporcion= " + proporcion);
-        System.out.println("Poder antes bon");
-        System.out.println(poder);
-
+        System.out.println("Poder antes bonificacion = "+poder);
         if (bonificacion > 0.0) {
             //Obtenemos el poder de la bonificación
-            poder = poder * bonificacion;
-
+            poderbonificado= poder * bonificacion;
             //Obtenemos ahora la proporción de poder que causa bajas en cada tipo de unidad
             for (TTropas tr : uBonificadoras) {
                 if (enemigas.getUnidad().get(tr) != null) {
                     proporcion = (double) (enemigas.getUnidad().get(tr).getcantidad()) / (double) (n);
-                    poderBajas.put(tr, poder * proporcion);
+                    poderBajas.put(tr, poderbonificado * proporcion);
                 }
 
             }
         }
-
-        System.out.println("Poder con bon");
-        System.out.println(poder);
-        System.out.println("Poder extra por unidad=" + poder / unidad.getcantidad());
+        System.out.println("Bonificación = "+bonificacion);
+        System.out.println("Poder extra por bonificacion = "+poderbonificado);
+        System.out.println("Poder extra por unidad=" + poderbonificado / unidad.getcantidad());
     }
 
     /*
@@ -462,7 +470,7 @@ System.out.println(bajasD);
      * uBonificadoras: es un vector que contiene los índices de las unidades que bonifican.
      * poder: es un vector con los poderes de las unidades enemigas.
      */
-//Realmente esta hace falta??. 
+//Realmente esta hace falta??. No hace falta. 
     //Si es bonificable, estará en la lista. Si no es bonificable, pues no lo estará.   
     private boolean bonificable(List<TTropas> uBonificadoras, Map<TTropas, Double> poder) {
         for (TTropas tipotropa : uBonificadoras) {
