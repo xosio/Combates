@@ -61,7 +61,7 @@ public class Contienda {
                 //No implementado
                 this.accion = new Acciones();
                 accion.setOperacion("ASALTAR");
-                break; //He tenido que añadir los break porque se metía siempre en este
+                break;               
         }
 
         //Mes....
@@ -117,17 +117,25 @@ public class Contienda {
         switch (accion.getOperacion()) {
             case "ATACAR":
                 //Ataque
-
-                p = p.enFeudo(feudo);
-                accion.atacar(ataca, defiende, p);
-                //escribeBajas();
+                System.out.println("Atacar");
+                //Comprobamos que los enemigos tienen tropas aniquilables
+                if(conTropasCombate(defiende))
+                {
+                    p = p.enFeudo(feudo);
+                    accion.atacar(ataca, defiende, p);
+                }else
+                {
+                    reporte.setMensaje1("El grupo enemigo no tiene tropas que ofrezcan resistencia");
+                }
                 break;
 
             case "ASALTAR":
+                System.out.println("Asaltar");
                 //Sin implementar
                 break;
 
             case "ASEDIAR":
+                System.out.println("Asediar");
                 //Sin implementar
                 //Boceto
                 //Solo se podrá asediar en feudos con propietario y edificio...
@@ -161,58 +169,61 @@ public class Contienda {
                             //Hay edificio
                             p = p.enFeudo(feudo);
                             accion.atacar(ataca, defiende, p);
+                            
                             //Comprobamos si las unidades guarnecidas salen a luchar
-                            //if ((aux.getmoverdefensor()) || (aux.gethuyedefensor()) || (aux.getdefensoraniquilado())) {
                             if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
                                 //Las unidades guarnecidas no salen a luchar/defender
                                 if (accion.getOperacion().equals("CONQUISTAR")) {
-                                    //Añadir mensaje en reporte conquista, el feudo no se puede conquistar.
-                                    reporte.setMensajes("Las cobardes tropas enemigas se han refugiado en el edificio");
+                                    accion.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos");
                                     return reporte;
                                 }
-                                //Si el edificio es castillo o superior no se puede saquear
+                                //Si el edificio es castillo, fortaleza o ciudad no se puede saquear
+                                //Falta añadir la condición de ciudad.
                                 if ((accion.getOperacion().equals("SAQUEAR")) && ((edificio == TEdificio.CASTILLO) || (edificio == TEdificio.FORTALEZA))) {
-                                    reporte.setMensajes("No se pueden saquear los feudo con castillos o fortalezas");
+                                    accion.setMensaje1("Las cobardes tropas enemigas se han refugiado en el edificio junto con los campesinos y sus propiedades");
                                     return reporte;
-                                }
-                                //Enfrentamiento con los campesinos. Arrasar o saquear en feudo con TORRES o SIN EDIFICIO
+                                }                               
+                                //Enfrentamiento con los campesinos. Arrasar o saquear en feudo con TORRE
+                                accion.setMensaje2("mientras las cobardes tropas enemigas se han refugiado en el edificio");
                                 accion.operacionSinTropas(ataca, feudo, culturaagresor);
-                                return reporte;
 
                             } else {
                                 //Las unidades guarnecidas salen a luchar, pues repelen el ataque
-                                //escribeBajas();
-                                return reporte;
+                                accion.escribeBajas(reporte);
+                                accion.setExito(true);
+                                accion.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra misión");
                             }
                         } else {
                             //No hay edificio:
-                            //Feudo con propietario y con tropas (Tropas defensivas. ¿Que pasa si hay tropas, pero no defensivas. Carretas, torres de asalto....
-                            {
-                                p = p.enFeudo(feudo);
-                                accion.atacar(ataca, defiende, p);
-                                //if ((reporte.getmoverdefensor()) || (reporte.gethuyedefensor()) || (reporte.getdefensoraniquilado())) {
-                                if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
+                            //Feudo con propietario y con tropas defensivas. 
+//¿Que pasa si hay tropas, pero no defensivas. Carretas, torres de asalto....?
+//Pues si es conquistar o arrasar las ignoran y si es saqueo las capturan.
+                            accion.setExito(true);
+                            p = p.enFeudo(feudo);
+                            accion.atacar(ataca, defiende, p);
+                            accion.escribeBajas(reporte);
+                            //Comprobamos si las tropas agresoras continúan
+                            if (accion.isMuevedefensor() || accion.isHuyedefensor() || accion.isAniquiladefensor()) {
                                     accion.operacionSinTropas(ataca, feudo, culturaagresor);
+                            } else {
+                                    //Las unidades repelen a los enemigos
+                                    accion.setMensaje2("Las tropas enemigas han impedido que cumplamos nuestra orden");
                                     return reporte;
-                                } else {
-                                    //Las unidades repelen a los enemigos   
-                                    return reporte;
-                                }
                             }
-                        }
-                    } else {
+                       }              
+                    } else {System.out.println("No hay tropas");
                         //No hay tropas
                         //Feudo con propietario sin tropas.
                         //Igual que antes. Las tropas que no hay son de combate...
 
                         accion.operacionSinTropas(ataca, feudo, culturaagresor);
-                        return reporte;
                         //¿Sublebar feudo?   
                     }
                 }
-
+                break;
         }
         //Terminar de escribir el reporte con los datos de accion..
+        accion.completaReporte(reporte);
         return reporte;
     }
 
@@ -228,35 +239,36 @@ public class Contienda {
         for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             TropasK u = elemento.getValue();
-            double poder;
-            poder = grupo.getDefensaD(tipotropa, p)*grupo.getCantidadTipoTropa(tipotropa);
-            //Getdefensa fuede ser distinto de cero y que la cantidad de tropas sea cero.
-            if (poder > 0) {
+            
+            double poder= grupo.getDefensaD(tipotropa, p)*grupo.getCantidadTipoTropa(tipotropa);
+
+            if (poder > 0.0) {
                 return true;
             }
         }
         return false;
     }
 
+    //Mejor en acciones ¿no?
     //Pone en el reporte las bajas que se producen como resultado de los combates.
     //Lo dicho con las aniquilaciones.
     /*
-     public void escribeBajas() {
-     //Atacantes...
-     for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
-     TTropas tipotropas = elemento.getKey();
-     double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
-     int bajasAi = redondea(poderBajasAi);
-     reporte.ponBajasatacante(tipotropas, bajasAi);
-     }
+     public void escribeBajas(Reporte reporte) {
+        //Atacantes...
+        for (Map.Entry<TTropas, Double> elemento : poderBajasA.entrySet()) {
+        TTropas tipotropas = elemento.getKey();
+        double poderBajasAi = elemento.getValue() / ataca.getDefensaA(tipotropas, p);
+        int bajasAi = redondea(poderBajasAi);
+        reporte.ponBajasatacante(tipotropas, bajasAi);
+        }
 
-     //Defensores...
-     for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
-     TTropas tipotropas = elemento.getKey();
-     double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
-     int bajasDi = redondea(poderBajasDi);
-     reporte.ponBajasDefensor(tipotropas, bajasDi);
-     }
-     }
-     */
+        //Defensores...
+        for (Map.Entry<TTropas, Double> elemento : poderBajasD.entrySet()) {
+        TTropas tipotropas = elemento.getKey();
+        double poderBajasDi = elemento.getValue() / ataca.getDefensaD(tipotropas, p);
+        int bajasDi = redondea(poderBajasDi);
+        reporte.ponBajasDefensor(tipotropas, bajasDi);
+        }
+     }*/
+     
 }

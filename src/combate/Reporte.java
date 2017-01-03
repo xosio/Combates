@@ -18,6 +18,7 @@ public class Reporte {
 
     protected String terreno; //El terreno ya lo sabemos. No tednría que estar en el reporte
     protected GrupoTropas defiende; //Idem
+    protected String coordenadas="xxx-xxx";
 
     protected int[] bajasatacante = new int[ntropas]; //Las bajas las implementamos con maps
     protected int[] bajasdefensor = new int[ntropas]; //Idemn
@@ -43,13 +44,20 @@ public class Reporte {
     private boolean huyeatacante;
     private boolean huyedefensor;
 
-    //Informa acerca de si la accion ha tendio exito
-    private boolean exito = false;
-    private String mensajes; //Para poner, en su caso, explicaciones de lo que ha pasado....
+    
+    private boolean exito = false;//PAra indicar si se produce enfrentamiento con las unidades defensivas
+    private String mensaje1=null; //Para indicar la imposibilidad de realizar la acción
+    private String mensaje2=null; //Para indicar el motivo del ataque fallido
+    private String mensaje3=null; //Para indicar una derrota por los campesinos
+    
+    private int reservaarrasada;
+    private int mansosarrasados;
+  
 
     public Reporte() {
     }
 
+    //Ya no hace falta
     Reporte(GrupoTropas tropas, String terreno) {
         this.terreno = terreno;
         this.defiende = tropas;
@@ -59,8 +67,31 @@ public class Reporte {
      * ************* Métodos getter y
      * setter**************************************
      */
-    public void setMensajes(String mensajes) {
-        this.mensajes = mensajes;
+    public void setMansosarrasados(int cantidad)
+    {
+        this.mansosarrasados=cantidad;
+    }
+    public int getMansosarrasados()
+    {
+        return mansosarrasados;
+    }
+    
+    public void setReservaarrasada(int cantidad)
+    {
+        this.reservaarrasada=cantidad;
+    }
+    public int getReservaarrasada()
+    {
+        return reservaarrasada;
+    }
+    public void setMensaje1(String mensajes) {
+        this.mensaje1 = mensajes;
+    }
+    public void setMensaje2(String mensajes) {
+        this.mensaje2 = mensajes;
+    }
+    public void setMensaje3(String mensajes) {
+        this.mensaje3 = mensajes;
     }
 
     public boolean isExito() {
@@ -177,7 +208,7 @@ public class Reporte {
     /**
      * *******************Huidas*************************
      */
-    public void setmoveratacante(boolean mover) {
+    public void setMoveratacante(boolean mover) {
         moveratacante = mover;
     }
 
@@ -189,15 +220,15 @@ public class Reporte {
         return moverdefensor;
     }
 
-    public boolean getmoveratacante() {
+    public boolean getMoveratacante() {
         return moveratacante;
     }
 
-    public void sethuyeatacante(boolean mover) {
+    public void setHuyeatacante(boolean mover) {
         huyeatacante = mover;
     }
 
-    public boolean gethuyeatacante() {
+    public boolean getHuyeatacante() {
         return huyeatacante;
     }
 
@@ -212,39 +243,46 @@ public class Reporte {
     /**
      * *************** Aniquilaciones *******************
      */
-    public void setatacanteaniquilado(boolean aniquilados) {
+    public void setAtacanteaniquilado(boolean aniquilados) {
         atacanteaniquilado = aniquilados;
     }
 
-    public boolean getatacanteaniquilado() {
+    public boolean getAtacanteaniquilado() {
         return atacanteaniquilado;
     }
 
-    public void setdefensoraniquilado(boolean aniquilados) {
+    public void setDefensoraniquilado(boolean aniquilados) {
         defensoraniquilado = aniquilados;
     }
 
-    public boolean getdefensoraniquilado() {
+    public boolean getDefensoraniquilado() {
         return defensoraniquilado;
     }
 
     /**
      * *****************Victoria**************************
      */
-    public void setvictoriaatacante(boolean victoriaatacante) {
+    public void setVictoriaatacante(boolean victoriaatacante) {
         this.victoriaatacante = victoriaatacante;
     }
 
-    public boolean getvictoriaatacante() {
+    public boolean getVictoriaatacante() {
         return victoriaatacante;
     }
 
-    public void setvictoriadefensor(boolean victoriadefensor) {
+    public void setVictoriadefensor(boolean victoriadefensor) {
         this.victoriadefensor = victoriadefensor;
     }
 
-    public boolean getvictoriadefensor() {
+    public boolean getVictoriadefensor() {
         return victoriadefensor;
+    }
+    
+    public void setVictoriasobrecampis(boolean victoriasobrecampis) {
+        this.victoriasobrecampis = victoriasobrecampis;
+    }
+    public boolean getVictoriasobrecampis() {
+        return victoriasobrecampis;
     }
 
     /**
@@ -261,35 +299,145 @@ public class Reporte {
     /**
      * ************Para Borrar***************************
      */
-    void print() {
-
-        System.out.println("Victoria actacante: " + victoriaatacante);
-        System.out.println("Mueve atacante: " + moveratacante);
-        System.out.println("Aniquila atacante: " + atacanteaniquilado);
+    //Mensaje para el atacante
+    void printArrasar() {
         
-        System.out.println("*******");
-        System.out.println("Victoria defensor: " + victoriadefensor);
-        System.out.println("Mueve defensor: " + moverdefensor);
-        System.out.println("Aniquila defensor: " + defensoraniquilado);
-
-        System.out.println("*******");
+        if(mensaje1!=null)//No se puede realizar la acción
+        {
+            System.out.println("Mi señor, no hemos podido ARRASAR el feudo "+coordenadas+" porque "+mensaje1);
+        }
+        else{
+            if(mensaje2!=null)//La acción ha fracasado o no se puede realizar en las propiedades del señor
+            {
+                System.out.print("Mi señor, siguiendo vuestras órdenes hemos ARRASADO el feudo "+coordenadas+" ");
+                if(exito)//Las unidades defensivas repelen el ataque
+                {
+                    System.out.println(mensaje2);
+                    print();
+                    return;     
+                }else//Las tropas defensivas se refugian en el edifcio
+                {
+                    System.out.println(mensaje2);
+                    if(victoriasobrecampis)
+                    {
+                        System.out.println("Pero hemos arrasado las siguientes cantidades:");
+                        System.out.println(reservaarrasada+" víveres de la reserva.");
+                        System.out.println(mansosarrasados+" víveres de los mansos.");
+                        return;
+                    }
+                    else{
+                        if(mensaje3!=null)
+                        {
+                            System.out.println("Además" +mensaje3);
+                            print();
+                        }
+                        System.out.println("Pero hemos arrasado:");
+                        System.out.println(reservaarrasada+" víveres de la reserva.");                       
+                        return;   
+                    }
+                }    
+            }
+            //No hay edificio
+            System.out.println("Mi señor, siguiendo vuestras órdenes hemos ARRASADO el feudo "+coordenadas+" :");
+            if(exito)//Hay lucha con las unidades defensivas
+            {
+                if(mensaje2!=null)//Las unidades defensivas repelen el ataque
+                {
+                    System.out.println(mensaje2);
+                    print();
+                    return;
+                }
+                if(mensaje3!=null)//Los campesinos repelen el ataque
+                {
+                    System.out.println("Pero "+mensaje3);
+                }
+                //Imprimo el combate con las bajas conjuntas tanto si han luchado
+                // solo contra las tropas defensivas como si han luchado también contra los campis.
+                print();
+                //Informe de arrasado
+                System.out.println("Pero hemos arrasado las siguientes cantidades:");
+                System.out.println(reservaarrasada+" víveres de la reserva.");
+                System.out.println(mansosarrasados+" víveres de los mansos.");
+            }else//No hay lucha contra las unidades defensivas
+            {
+                if(mensaje3!=null)//Los campesinos repelen el ataque
+                {
+                    System.out.println(mensaje3);
+                    print();
+                    System.out.println("Pero hemos arrasado las siguientes cantidades:");
+                    System.out.println(reservaarrasada+" víveres de la reserva.");
+                    return;
+                }
+                //Informe de arrasado
+                System.out.println("Hemos arrasado las siguientes cantidades:");
+                System.out.println(reservaarrasada+" víveres de la reserva.");
+                System.out.println(mansosarrasados+" víveres de los mansos.");
+            }   
+        }
+    }
+    void printSaquear()
+    {
         
-        System.out.println("Bajas del grupo atacante");
+    }
+    void print()
+    {
+        if(mensaje1!=null)
+        {
+            System.out.println(mensaje1);
+            return;
+        }
+        if(victoriaatacante){
+            System.out.println("Al enfrentarnos a nuestros enemigos hemos obtenido la victoria.");
+        }
+        else
+        {
+            if(atacanteaniquilado){
+                System.out.println("Nuestras unidades han sido completamente aniquiladas.");
+            }
+            else{
+                if(moveratacante){
+                System.out.println("Nuestras unidades se retiran hacia posiciones más seguras.");
+                }
+                else{
+                    if(huyeatacante){
+                        System.out.println("Nuestras unidades huyen en desbandada.");
+                    }
+                    else{
+                        System.out.println("Hemos sido derrotados.");
+                    }
+                }
+            }       
+        }
+        System.out.println("Teniendo las siguientes bajas: ");
 
         for (Map.Entry<TTropas, Integer> elemento : bajasatacanteX.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             int cantidad = elemento.getValue();
+            if(cantidad>0){
             System.out.println("Se han producido " + cantidad + " bajas de " + tipotropa);
+            }
         }
-
-        System.out.println("Bajas del grupo defensor");
+/****************************Pasamos al defensor*********************************************/
         
+        System.out.println("Causando las siguientes bajas entre las filas enemigas: ");
+  
         for (Map.Entry<TTropas, Integer> elemento : bajasdefensorX.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             int cantidad = elemento.getValue();
+            if(cantidad>0){
             System.out.println("Se han producido " + cantidad + " bajas de " + tipotropa);
+            }
         }
-
+        
+         if(defensoraniquilado){
+                System.out.println("Las unidades enemigas han sido completamente aniquiladas.");
+         }
+         if(moverdefensor){
+                System.out.println("Las unidades enemigas se retiran hacia posiciones más seguras.");
+         }
+         if(huyedefensor){
+                System.out.println("Las unidades enemigas huyen en desbandada.");
+         }    
     }
 
 }

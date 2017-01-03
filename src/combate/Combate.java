@@ -37,22 +37,22 @@ public class Combate {
         String accion = "ARRASAR";
 
         //Mes en el que se produce el ataque. Solo se emplea con la acción arrsar
-        int mes = 3;
+        int mes = 6;
 
         //Datos feudo. Poner en FeudosK
         int poblacion = 400;
         int campesinos = 80;
-        int satisfaccion = 2;
+        int satisfaccion = 0;
         int producidomansos = 84000;
         int producidoreserva = 0;
         int arados = 0;
         TCultura tcultura = TCultura.CRISTIANOS;
-        TFeudo tfeudo = TFeudo.LLANO;
+        TFeudo tfeudo = TFeudo.MONTAÑA;
         boolean conpropietario = true;
-        TEdificio niveledificio = TEdificio.CASTILLO;
+        TEdificio niveledificio = TEdificio.NADA;
 
         //Los ponemos todo en un objeto FeudosK
-        FeudoK feudo = new FeudoK(poblacion, campesinos, satisfaccion, producidomansos, producidoreserva, arados, tcultura, tfeudo, conpropietario, niveledificio);
+        FeudoK feudo = new FeudoK(poblacion, campesinos, satisfaccion, producidomansos, producidoreserva, arados, tcultura, tfeudo, conpropietario, niveledificio,mes);
 
         //Cultura del agresor. Objeto de tipo TTCultura
         TCultura culturaagresor = TCultura.CRISTIANOS;
@@ -82,8 +82,9 @@ public class Combate {
         //at.set(3,100, 100, 100);
 
         //TropasK no necesita tener la propiedad TTropas. Pero de momento está
-        TropasK trat3A = new TropasK(TTropas.LANCEROS, 100, 100, 100);
-
+        TropasK trat1A = new TropasK(TTropas.CABALLEROS, 00, 100, 100);
+        grupoat.put(TTropas.CABALLEROS, trat1A);
+        TropasK trat3A = new TropasK(TTropas.LANCEROS, 80, 100, 100);
         grupoat.put(TTropas.LANCEROS, trat3A);
         //at.set(4,000,100,100);
         //at.set(5, 00, 100, 100);
@@ -99,28 +100,37 @@ public class Combate {
 
         //at1.set(0,00,100,100);
         //def.set(1,50, 100, 100);
-        TropasK tr1def = new TropasK(TTropas.CABALLEROS, 100, 100, 100);
+        TropasK tr1def = new TropasK(TTropas.CABALLEROS, 0, 100, 100);
         grupodef.put(TTropas.CABALLEROS, tr1def);
         //at.set(2,100,100,100);
-        TropasK tr2def = new TropasK(TTropas.JINETES, 100, 100, 100);
+        TropasK tr2def = new TropasK(TTropas.JINETES, 0, 100, 100);
         grupodef.put(TTropas.JINETES, tr2def);
+        TropasK trat3def = new TropasK(TTropas.LANCEROS, 24, 100, 100);
+        grupodef.put(TTropas.LANCEROS, trat3def);
         //at.set(3, 0, 100, 100);
         //at.set(4,000,100,100);
         //at.set(5, 0, 100, 100);
 
         GrupoTropas def = new GrupoTropas(grupodef, false, false);
-
-       
+        
+        
+     
         //Ejecutamos la contienda...
         Contienda c = new Contienda(at, def, feudo, accion, culturaagresor, mes);
+        Contienda d = new Contienda(at, def, feudo, "ATACAR", culturaagresor, mes);
 
         //Y cojemos el informe de resultados...
         Reporte reporte = c.reporte();
-
+        reporte.printArrasar();
+        Reporte reporte1 = d.reporte();
+        reporte1.print();
+         System.out.println("Hay que actualizar las tropas tras el combate cuando pasan luego con los campesinos");
+          System.out.println("Los campesinos no se imprimen en las bajas");
         /**
          * *************** RESULTADO
          * *******************************************************
-         */
+         *
+        
         System.out.println("Tropas que atacan");
         at.print();
         
@@ -129,7 +139,7 @@ public class Combate {
         
         System.out.println("Resultado de la acción " + accion);
         reporte.print();
-
+        */
     }
 
 }

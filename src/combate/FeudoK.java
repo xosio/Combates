@@ -28,8 +28,9 @@ public class FeudoK {
     private TFeudo tfeudo;
     private boolean conpropietario; //=true;
     private TEdificio edificio; //=2;
+    private int mes;
 
-    public FeudoK(int poblacion, int campesinos, int satisfaccion, int producidomansos, int producidoreserva, int arados, TCultura tcultura, TFeudo tfeudo, boolean conpropietario, TEdificio edificio) {
+    public FeudoK(int poblacion, int campesinos, int satisfaccion, int producidomansos, int producidoreserva, int arados, TCultura tcultura, TFeudo tfeudo, boolean conpropietario, TEdificio edificio, int mes) {
         this.poblacion = poblacion;
         this.campesinos = campesinos;
         this.satisfaccion = satisfaccion; ///?????
@@ -40,6 +41,7 @@ public class FeudoK {
         this.tfeudo = tfeudo;
         this.conpropietario = conpropietario;
         this.edificio = edificio;
+        this.mes=mes;
     }
 
     public boolean isConpropietario() {
@@ -62,6 +64,24 @@ public class FeudoK {
         return edificio;
     }
 
+    public int getProducidoreserva()
+    {
+        return producidoreserva;
+    }
+    public int getProducidomansos()
+    {
+        return producidomansos;
+    }
+    
+    public int getMes()
+    {
+        return mes;
+    }
+    
+    public void setMes(int mes)
+    {
+        this.mes=mes;
+    }
     /**
      * Devuelve si la accion causa molestia sobre los campesinos en Caso de conquista.
      *
@@ -75,7 +95,7 @@ public class FeudoK {
 
     public int campesinosConquista(TCultura culturaagresor) {
 
-        double ajuste = tcultura.factorCultura(culturaagresor) * satisfaccionConquista(1);
+        double ajuste = tcultura.factorCultura(culturaagresor) * satisfaccionConquista();
 
         int ncampesinos = (int) (poblacion * ajuste);
 
@@ -83,20 +103,20 @@ public class FeudoK {
     }
 
      //No sé que hace ni a que se refiere el parámetro indice... 
-    private double satisfaccionConquista(int indice) {
-        double satisfaccion = 1.0;
-        switch (indice) {
+    private double satisfaccionConquista() {
+        double variacion = 1.0;
+        switch (satisfaccion) {
             case 0:
-                satisfaccion = Math.random() * 0.1;
+                variacion = Math.random() * 0.1;
                 break;
             case 1:
-                satisfaccion = 0.1 + Math.random() * 0.2;
+                variacion = 0.1 + Math.random() * 0.2;
                 break;
             case 2:
-                satisfaccion = 0.3 + Math.random() * 0.3;
+                variacion = 0.3 + Math.random() * 0.3;
                 break;
             case 3:
-                satisfaccion = 0.4 + Math.random() * 0.3;
+                variacion = 0.4 + Math.random() * 0.3;
                 break;
             default:
                 return 1.0;
@@ -104,7 +124,26 @@ public class FeudoK {
         return satisfaccion;
 
     }
-    
+    private double satisfaccionArrase() {
+        double variacion = 1.0;
+        switch (satisfaccion) {
+            case 0:
+                variacion =3.0+ Math.random() * 0.5;
+                break;
+            case 1:
+                variacion = 2.0 + Math.random() * 0.5;
+                break;
+            case 2:
+                variacion = 1.0 + Math.random() * 0.3;
+                break;
+            case 3:
+                variacion = 0.5 + Math.random() * 0.2;
+                break;
+            default:
+                return 1.0;
+        }
+        return variacion;
+    }
     
     //Falta concretar e implementar. Lo que hay por tener algo...
     public int molestiaSaqueo(int capacidadsaqueo)
@@ -122,28 +161,46 @@ public class FeudoK {
     */
 
      public int molestiaArrase(int arrasado)
-    {      
+    {             
+        //Calculamos los meses en los que los campesinos se tienen que alimentar con la producción arrasada.
+        int acosechas=mesesEntreCosechas();
+        //Obtenemos el consumo correspondiente
+        int consumo=poblacion*acosechas*31;
         
-        //Falta concretar e implementar. Lo que está por tener algo...
-        //Creo que ya tengo algunas funciones escritas sobre todo esto. Pero las tengo que buscar...
-        
-        if(arrasado>producidomansos)
-        {
-            arrasado=producidomansos;
-        }
-        
-        int produccion=producidomansos;
-        //Obtenemos las sobras de los campesinos hasta las siguientes cosechas
-        int consumo=poblacion;
-        int sobras=produccion-consumo-arrasado;
-        //Comprobamos si la carga excede las sobras de los campesinos.
-        if(sobras>=0)
-        {
-            return 0;
-        }   
+        //Calculamos los campesinos molestos
+        int campis=(int)(Math.round(satisfaccionArrase()*campesinos*((double)(arrasado))/(double)(consumo)));
        
-        return (int) Math.round(campesinos*(1.0-((double)(produccion-arrasado))/(double)(consumo)));
+        return  Math.min(campesinos, campis);
     }
-    
-    
+    //Nos da el periodo entre las próximas cosechas y las siguientes
+     public int mesesEntreCosechas()
+     {
+         int periodo=0;
+         if((mes>=4)&&(mes<=8))
+         {
+             periodo=8;
+         }else
+         {
+             periodo=4;
+         }
+         return periodo;
+     }
+     //Nos da los meses que faltan hasta las próximas cosechas.
+    public int mesesAcosechas()
+    {
+        int meses=0;
+        if(mes>=8){
+            meses=16-mes;
+        }else
+        {
+            if(mes<4)
+            {
+                meses=4-mes;
+            }else
+            {
+                meses=8-mes;
+            }
+        }
+        return meses;
+    }
 }

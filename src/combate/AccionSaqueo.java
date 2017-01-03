@@ -28,7 +28,7 @@ public class AccionSaqueo extends Acciones {
     public void combateCampesinos(GrupoTropas ataca, FeudoK feudo, TCultura culturaagresor) {
 
         //Calcular el poder de arrase del grupo ataca
-        int arrasado = ataca.poderArrase();
+        int arrasado = ataca.poderSaqueo();
         int campisresistentes = feudo.molestiaSaqueo(arrasado);
 
         if (campisresistentes > 0) {
