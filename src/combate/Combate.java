@@ -124,6 +124,8 @@ public class Combate {
         reporte.printArrasar();
         Reporte reporte1 = d.reporte();
         reporte1.print();
+         System.out.println("Hay que actualizar las tropas tras el combate cuando pasan luego con los campesinos");
+          System.out.println("Los campesinos no se imprimen en las bajas");
         /**
          * *************** RESULTADO
          * *******************************************************
