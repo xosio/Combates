@@ -13,7 +13,7 @@ package sub;
 
 public enum TTropas {
     
-    //TIPO DE TROPAS (Capcidad trasporte,unidad de consumo diaria,capacidad transporte oros, aniquilable)
+    //TIPO DE TROPAS (Capcidad trasporte,unidad de consumo diaria,capacidad transporte oros, aniquilable, apie, poderarrasar)
     //Capacidad de transporte en libras. 
     
     CAMPESINOS(4,1,0, true, true,0),
@@ -23,8 +23,11 @@ public enum TTropas {
     LANCEROS(5,1,50,true, true,1000),
     JINETES(20,2,50,true, false,0),
     CABALLEROS(9,3,100,true, false,0),
-    CARRETAS(1800,4,1800,false, false,0);
+    CARRETAS(1800,4,1800,false, false,0),
     //A añadir: ballesteros, torres de asedio, arietes...
+    EXPLORADORES(40,2,50,true,false,0),
+    ARIETES(0,6,0,false, false,0),
+    TASALTO(0,6,0,false, false,0);
    
     
    //private final double poder; Poder: esto serían los parámetros de combate...
@@ -88,8 +91,4 @@ public enum TTropas {
         }
         return oros;
     }
-    
-    
-    
-    
 }

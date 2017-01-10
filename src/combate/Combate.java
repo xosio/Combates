@@ -34,7 +34,7 @@ public class Combate {
         //CONQUISTAR
         //ASALTAR
         //ASEDIAR
-        String accion = "ARRASAR";
+        String accion = "CONQUISTAR";
 
         //Mes en el que se produce el ataque. Solo se emplea con la acción arrsar
         int mes = 6;
@@ -42,104 +42,74 @@ public class Combate {
         //Datos feudo. Poner en FeudosK
         int poblacion = 400;
         int campesinos = 80;
-        int satisfaccion = 0;
+        int satisfaccion = 2 ;
         int producidomansos = 84000;
-        int producidoreserva = 0;
+        int producidoreserva = 16800;
         int arados = 0;
-        TCultura tcultura = TCultura.CRISTIANOS;
-        TFeudo tfeudo = TFeudo.MONTAÑA;
-        boolean conpropietario = true;
-        TEdificio niveledificio = TEdificio.NADA;
+        TCultura tcultura = TCultura.CAMPESINOS;
+        TFeudo tfeudo = TFeudo.LLANO;
+        boolean conpropietario = false;
+        TEdificio niveledificio = TEdificio.TORRE;
 
         //Los ponemos todo en un objeto FeudosK
         FeudoK feudo = new FeudoK(poblacion, campesinos, satisfaccion, producidomansos, producidoreserva, arados, tcultura, tfeudo, conpropietario, niveledificio,mes);
 
         //Cultura del agresor. Objeto de tipo TTCultura
-        TCultura culturaagresor = TCultura.CRISTIANOS;
+        TCultura culturaagresor = TCultura.SARRACENOS;
 
-        /**
-         * *********************GRUPO DE
-         * ATAQUE**********************************
-         */
-        //TTropas:
-        //Arquero------------>0--->ARQUEROS
-        //Caballero---------->1--->CABALLEROS
-        //Jinete------------->2--->JINETES
-        //Lancero------------>3--->LANCEROS
-        //Levas-------------->4--->LEVAS
-        //Soldado------------>5--->SOLDADOS
-        //CAMPESINOS
-        //Se puedn añadir en TTropas lo que queramos:
-        //EXPLORADORES
-        //TORRESASALTO
-        //...
+       
         //Para cada tipo que haya en un grupo, ponemos los datos del tipo: cantidad, pericia y moral y lo de la carga...
+        
+        /** GRUPO DE ATAQUE**/
         Map<TTropas, TropasK> grupoat = new HashMap();
-        //at.set(0,00,100,100);
-        //unidades1.add(attr1);
-        //at.set(1,0,100,100);
-        //at.set(2,00,100,100);
-        //at.set(3,100, 100, 100);
+       
+        
+        //Caballeros
+        //Para deputación: Si no queremos que hayan tropas de un tipo NO ponerlas el Map...!!!!!!!!!!!!!!
+        //grupoat.put(TTropas.CABALLEROS, new TropasK(80, 100, 100,0,0));
+        
+        //Lanceros
+        //grupoat.put(TTropas.LANCEROS, new TropasK(8, 100, 100,0,0));
+       
+        //Soldados
+        grupoat.put(TTropas.SOLDADOS, new TropasK(50, 100, 100,0,0));
 
-        //TropasK no necesita tener la propiedad TTropas. Pero de momento está
-        TropasK trat1A = new TropasK(TTropas.CABALLEROS, 00, 100, 100);
-        grupoat.put(TTropas.CABALLEROS, trat1A);
-        TropasK trat3A = new TropasK(TTropas.LANCEROS, 80, 100, 100);
-        grupoat.put(TTropas.LANCEROS, trat3A);
-        //at.set(4,000,100,100);
-        //at.set(5, 00, 100, 100);
-
-        //Los parámetros en retirada y en movimiento. Para que sirven????
+        //Arietes
+        grupoat.put(TTropas.ARIETES, new TropasK(10, 100, 100,0,0));
+    //Los parámetros en retirada y en movimiento. Para que sirven????
         GrupoTropas at = new GrupoTropas(grupoat, false, false);
 
-        /**
-         * *********************GRUPO DE
-         * DEFENSA**********************************
-         */
+        /** GRUPO DE DEFENSA **/
         Map<TTropas, TropasK> grupodef = new HashMap();
-
-        //at1.set(0,00,100,100);
-        //def.set(1,50, 100, 100);
-        TropasK tr1def = new TropasK(TTropas.CABALLEROS, 0, 100, 100);
-        grupodef.put(TTropas.CABALLEROS, tr1def);
-        //at.set(2,100,100,100);
-        TropasK tr2def = new TropasK(TTropas.JINETES, 0, 100, 100);
-        grupodef.put(TTropas.JINETES, tr2def);
-        TropasK trat3def = new TropasK(TTropas.LANCEROS, 24, 100, 100);
-        grupodef.put(TTropas.LANCEROS, trat3def);
-        //at.set(3, 0, 100, 100);
-        //at.set(4,000,100,100);
-        //at.set(5, 0, 100, 100);
-
+        
+        //Caballeros
+        //Para depuración: Si no hay tropas de un tipo NO ponerlas el Map...!!!!!!!!!!!!!!
+        //grupodef.put(TTropas.CABALLEROS, new TropasK(80, 100, 100,0,0););
+        
+        //Jinetes
+        //grupodef.put(TTropas.JINETES, new TropasK(1000, 100, 100,0,0));
+        
+        //Lanceros 
+        //grupodef.put(TTropas.LANCEROS, new TropasK(10, 100, 100,0,0));
+        
+        //Carretas
+        //grupodef.put(TTropas.CARRETAS, new TropasK(10, 100, 100,0,0));
+        
+        //Exploradores
+        //grupodef.put(TTropas.EXPLORADORES, new TropasK(5, 100, 100,0,0));
+        
         GrupoTropas def = new GrupoTropas(grupodef, false, false);
         
-        
-     
         //Ejecutamos la contienda...
         Contienda c = new Contienda(at, def, feudo, accion, culturaagresor, mes);
-        Contienda d = new Contienda(at, def, feudo, "ATACAR", culturaagresor, mes);
-
+        c.resumen();
+       
         //Y cojemos el informe de resultados...
         Reporte reporte = c.reporte();
-        reporte.printArrasar();
-        Reporte reporte1 = d.reporte();
-        reporte1.print();
-         System.out.println("Hay que actualizar las tropas tras el combate cuando pasan luego con los campesinos");
-          System.out.println("Los campesinos no se imprimen en las bajas");
-        /**
-         * *************** RESULTADO
-         * *******************************************************
-         *
-        
-        System.out.println("Tropas que atacan");
-        at.print();
-        
-         System.out.println("Tropas que defienden");
-        def.print();
-        
-        System.out.println("Resultado de la acción " + accion);
+       
         reporte.print();
-        */
+       
+        System.out.println("Hay que actualizar las tropas tras el combate cuando pasan luego con los campesinos.");
     }
 
 }

@@ -394,12 +394,11 @@ public enum pCombateK {
                         return 6.0;
                     case LANCEROS:
                         return 4.0;
+                    case CAMPESINOS:
                     case LEVAS:
                         return 1.0;
                     case SOLDADOS:
                         return 2.0;
-                    case CAMPESINOS:
-                        return 1.0;
                     default:
                         return 0.0;
                 }
