@@ -58,6 +58,8 @@ public class Reporte {
 
     private int reservaarrasada;
     private int mansosarrasados;
+    
+    private boolean abrirporton;
 
     public Reporte(String accion, boolean conpropietario) {
         this.accion = accion;
@@ -83,6 +85,10 @@ public class Reporte {
     public int getReservaarrasada() {
         return reservaarrasada;
     }
+    
+    public boolean getAbrirporton(){
+        return abrirporton;
+    }
 
     public void setMensaje1(String mensajes) {
         this.mensaje1 = mensajes;
@@ -106,6 +112,10 @@ public class Reporte {
 
     public void setCampesinos(int campesinos) {
         this.campesinos = campesinos;
+    }
+    
+    public void setAbrirporton(boolean abrir){
+        abrirporton=abrir;
     }
 
     /* *************** Bajas      ********************/
@@ -275,6 +285,9 @@ public class Reporte {
      * ************Para Depuracion***************************
      */
     //Mensaje para el atacante
+    void printAsalto(){
+        
+    }
     void printArrasar() {
 
         if (mensaje1 != null)//No se puede realizar la acción

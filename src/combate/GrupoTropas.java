@@ -71,7 +71,16 @@ public class GrupoTropas {
         return enretirada;
     }
 
-   
+   public boolean tiene(String nombre)
+    {
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
+        {
+            if (elemento.getKey().toString().equals(nombre)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * ************************************* Combates *********************

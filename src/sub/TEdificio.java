@@ -16,7 +16,12 @@ public enum TEdificio {
     TORRE,
     CASTILLO,
     FORTALEZA;
-
+    
+    private int conservacion; //Estado de conservación del edificio sobre 100
+    private boolean portonabierto; //Indica si el porton está abierto o cerrado
+    private int piedras;//Contra arietes
+    private int plomos;//Contra arietes y torres de asalto
+    private int cdefensivas;//Contra torres de asalto y catapultas
     public static TEdificio setEdificio(short tipo) {
 
         TEdificio e = null;
@@ -92,5 +97,46 @@ public enum TEdificio {
                 r = 1800000;
         }
         return r;
-    }    
+    }  
+     
+     public int getConservacion()
+     {
+         return conservacion;
+     }
+     public void setConservacion(int conservacion)
+     {
+         this.conservacion=conservacion;
+     }
+     public boolean getPortonabierto()
+     {
+         return portonabierto;
+     }
+     public void setPortonabierto(boolean portonabierto)
+     {
+         this.portonabierto=portonabierto;
+     }
+     public int getPiedras()
+     {
+         return piedras;
+     }
+     public void setPiedras(int piedras)
+     {
+         this.piedras=piedras;
+     }
+     public int getPlomos()
+     {
+         return plomos;
+     }
+     public void setPlomos(int plomos)
+     {
+         this.plomos=plomos;
+     }
+     public int getCdefensivas()
+     {
+         return cdefensivas;
+     }
+     public void setCdefensivas(int cdefensivas)
+     {
+         this.cdefensivas=cdefensivas;
+     }
 }

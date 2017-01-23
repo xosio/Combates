@@ -27,7 +27,9 @@ public enum TTropas {
     //A añadir: ballesteros, torres de asedio, arietes...
     EXPLORADORES(40,2,50,true,false,0),
     ARIETES(0,6,0,false, false,0),
-    TASALTO(0,6,0,false, false,0);
+    TASALTO(0,6,0,false, false,0),
+    ESCALAS(0,6,0,false, false,0),
+    CATAPULTAS(0,6,0,false, false,0);
    
     
    //private final double poder; Poder: esto serían los parámetros de combate...

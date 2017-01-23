@@ -58,7 +58,7 @@ public class Contienda {
                 this.accion = null;
                 break;
             case "ASALTAR":
-                //No implementado
+                //En proceso
                 this.accion = new Acciones();
                 accion.setOperacion("ASALTAR");
                 break;
@@ -229,6 +229,57 @@ public class Contienda {
             case "ASALTAR":
 
                 //Sin implementar
+                //En primer lugar comprobamos si hay un boquete en la muralla
+                //o si el portón está abierto, pues en ambos casos
+                //no se utilizan torres ni escalas.
+                if((feudo.getEdificio().getConservacion()<50)||
+                        (feudo.getEdificio().getPortonabierto())){
+                    //Realizamos el ataque con los poderes propios del edificio
+                }
+                else{
+                    if(ataca.tiene("TASALTO")){
+                        //Enfrentamos las catapultas defensivas a las torres.
+                        if(feudo.getEdificio().getCdefensivas()>0){
+                            
+                        }
+                        //Obtenemos la cantidad de tropas que suben
+                        
+                        //Enfrentamos las torres a los plomos
+                        if(feudo.getEdificio().getPlomos()>0){
+                            //Obtenemos la cantidad de torres rotas
+                            
+                            //Obtenemos las bajas producidas entre las tropas
+                            
+                        }                    
+                        //Si quedan tropas por subir comprobamos si hay escalas.
+                        
+                        //Ejecutamos el ataque con los poderes pertinentes.
+                        
+                        //Si los atacantes obtiene la victoria se abre el portón
+                        
+                        //Enviamos mensaje de portón abierto
+                        
+                    }
+                    else{
+                        if(ataca.tiene("ESCALAS")){
+                           //Obtenemos la cantidad de soldados y levas que suben
+                           
+                           //Obtenemos el poder de las tropas que suben y los arqueros
+                           //que se acercan para disparar desde abajo
+                           
+                           //Si el atacante obtiene la victoria abren el portón.
+                           
+                           //Enviamos menaje de portón abierto.
+                           
+                           //Obtenemos la cantidad de escalas que se pierden, según la condición de victoria
+                           
+                        }
+                        else{
+                            accion.setMensaje1("No es posible asaltar el edificio, tendremos que debilitar la muralla o adquirir maquinaria de asedio");
+                            return reporte;
+                        }
+                    }
+                }
                 break;
 
             case "ASEDIAR":

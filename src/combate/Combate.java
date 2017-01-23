@@ -66,7 +66,7 @@ public class Combate {
         
         //Caballeros
         //Para deputación: Si no queremos que hayan tropas de un tipo NO ponerlas el Map...!!!!!!!!!!!!!!
-        //grupoat.put(TTropas.CABALLEROS, new TropasK(80, 100, 100,0,0));
+        grupoat.put(TTropas.CABALLEROS, new TropasK(80, 100, 100,0,0));
         
         //Lanceros
         //grupoat.put(TTropas.LANCEROS, new TropasK(8, 100, 100,0,0));
