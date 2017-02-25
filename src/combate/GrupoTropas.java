@@ -16,23 +16,12 @@ import java.util.Map;
  */
 public class GrupoTropas {
     
-    //Arquero----------->0
-    //Caballero---------->1
-    //Jinete------------->2
-    //Lancero------------>3
-    //Leva-------------->4
-    //Soldado------------>5
-
-    //Número de unidades que combaten ya que los exploradores van con los jinetes
-    //private int ntropas = 6;
-    //private List<TropasK> unidades = new ArrayList();
-
-    private Map<TTropas, TropasK> unidad; //Realmente, esto es la clase.
+   private Map<TTropas, TropasK> unidad; //Realmente, esto es la clase.
     
    //Para la clase ataque ???
     private boolean enretirada;
     private boolean enmovimiento;
-    //int nexploradores;
+    
 
     /**
      * *****************
@@ -82,7 +71,16 @@ public class GrupoTropas {
         return enretirada;
     }
 
-   
+   public boolean tiene(String nombre)
+    {
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
+        {
+            if (elemento.getKey().toString().equals(nombre)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * ************************************* Combates *********************
@@ -162,10 +160,36 @@ public class GrupoTropas {
         return sol;
     }
 
-   
+   /**
+    * Calculo si el grupo tiene tropas de combate
+    * @return 
+    */
+    public boolean conTropasCombate() {
+        pCombateK p = pCombateK.LLANO;
+       
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            TTropas tipotropa = elemento.getKey();
+            double poder = getDefensaD(tipotropa, p) * getCantidadTipoTropa(tipotropa);
+            if (poder > 0.0) {
+                return true;
+            }
+        }
+        return false;
+    }
         
            
-    
+   public Map<TTropas, Integer> capturaTropas(){
+       Map<TTropas, Integer> resultado=new HashMap();
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            TTropas tipotropas=elemento.getKey();
+            if (!tipotropas.isAniquilables()) {
+                TropasK u = elemento.getValue();
+                int cantidad=u.getcantidad();
+                resultado.put(tipotropas, cantidad);
+            }
+        }
+        return resultado;
+   }
     
     //Función que da la resistencia para cada uno de los tipos de tropa del Grupo cuando atacan.
     //Eliminar esta función: 
@@ -288,14 +312,16 @@ public class GrupoTropas {
         return false;
     }
     
+   
+    //Para depuración...
     
     void print() {
-        System.out.println("Unidades");
+        System.out.println("Unidades: cantindad, pericia, moral");
           for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
             TTropas tipotropa = elemento.getKey();
             TropasK u = elemento.getValue();
             int cantidad=u.getcantidad();
-            System.out.println(tipotropa+" :" + cantidad);   
+            System.out.println(tipotropa+" :" + cantidad+", "+u.getpericia()+", "+u.getmoral());   
         }
     }
 }

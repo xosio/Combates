@@ -34,7 +34,7 @@ public class AccionArrasar extends Acciones{
 
         if (campisresistentes > 0) {
             //Creamos el grupo de tropas....ncampesions a 100 de pericia y moral.
-            TropasK campis = new TropasK(campisresistentes, 100, 100);
+            TropasK campis = new TropasK(campisresistentes, 100, 100,0,0);
             Map<TTropas, TropasK> campesinos = new HashMap();
             campesinos.put(TTropas.CAMPESINOS, campis);
             GrupoTropas defensores = new GrupoTropas(campesinos, false, false);
@@ -131,8 +131,7 @@ public class AccionArrasar extends Acciones{
     
     //Da la cantidad de tropas correspondiente a un porcentaje dado
     public GrupoTropas siguenTropas(GrupoTropas grupo, double porcentaje) {
-
-        return grupo;
+          return grupo;
     }
 
     public void setMansosarrasados(int cantidad)

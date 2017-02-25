@@ -18,8 +18,10 @@ import sub.TTropas;
  */
 public class FeudoK {
 
+    private double campesinas = 80;
+    
     private int poblacion; //=400;
-    private int campesinos; //=80;
+    private double campesinos; //=80;
     private int satisfaccion; //=2;
     private int producidomansos; //=84000;
     private int producidoreserva; //=0;
@@ -41,7 +43,7 @@ public class FeudoK {
         this.tfeudo = tfeudo;
         this.conpropietario = conpropietario;
         this.edificio = edificio;
-        this.mes=mes;
+        this.mes = mes;
     }
 
     public boolean isConpropietario() {
@@ -64,47 +66,53 @@ public class FeudoK {
         return edificio;
     }
 
-    public int getProducidoreserva()
-    {
+    public int getProducidoreserva() {
         return producidoreserva;
     }
-    public int getProducidomansos()
-    {
+
+    public int getProducidomansos() {
         return producidomansos;
     }
-    
-    public int getMes()
-    {
+
+    public TCultura getTcultura() {
+        return tcultura;
+    }
+
+    public int getMes() {
         return mes;
     }
-    
-    public void setMes(int mes)
-    {
-        this.mes=mes;
+
+    public void setMes(int mes) {
+        this.mes = mes;
     }
+
     /**
-     * Devuelve si la accion causa molestia sobre los campesinos en Caso de conquista.
+     * Devuelve si la accion causa molestia sobre los campesinos en Caso de
+     * conquista.
      *
      * @param accion
      * @return
      */
     public int molestiaConquista(TCultura culturaagresor) {
+        double limite = campesinas / 1.75;
+        double disponibles = campesinos - limite;
 
-        return campesinosConquista(culturaagresor);
+        double ajuste1 = tcultura.factorCultura(culturaagresor);
+        double ajuste2= satisfaccionConquista();
+        double ajuste = 1+ajuste1 * ajuste2;
+
+        disponibles = disponibles * ajuste;
+        if (disponibles > campesinos) {
+            disponibles = campesinos;
+        }
+        if (disponibles < 0) {
+            disponibles = 0;
+        }
+        return (int) Math.floor(disponibles);
     }
 
-    public int campesinosConquista(TCultura culturaagresor) {
-
-        double ajuste = tcultura.factorCultura(culturaagresor) * satisfaccionConquista();
-
-        int ncampesinos = (int) (poblacion * ajuste);
-
-        return ncampesinos;
-    }
-
-     //No sé que hace ni a que se refiere el parámetro indice... 
     private double satisfaccionConquista() {
-        double variacion = 1.0;
+        double variacion;
         switch (satisfaccion) {
             case 0:
                 variacion = Math.random() * 0.1;
@@ -119,16 +127,16 @@ public class FeudoK {
                 variacion = 0.4 + Math.random() * 0.3;
                 break;
             default:
-                return 1.0;
+                variacion = 1.0;
         }
-        return satisfaccion;
-
+        return variacion;
     }
+
     private double satisfaccionArrase() {
         double variacion = 1.0;
         switch (satisfaccion) {
             case 0:
-                variacion =3.0+ Math.random() * 0.5;
+                variacion = 3.0 + Math.random() * 0.5;
                 break;
             case 1:
                 variacion = 2.0 + Math.random() * 0.5;
@@ -144,13 +152,12 @@ public class FeudoK {
         }
         return variacion;
     }
-    
+
     //Falta concretar e implementar. Lo que hay por tener algo...
-    public int molestiaSaqueo(int capacidadsaqueo)
-    {
-        boolean molesta=true;
-        double porcentaje=1.0;//Nos da en tanto por uno la molestia de los aldeanos por la accón
-        return campesinos;
+    public int molestiaSaqueo(int capacidadsaqueo) {
+        boolean molesta = true;
+        double porcentaje = 1.0;//Nos da en tanto por uno la molestia de los aldeanos por la accón
+        return (int) campesinos;
     }
     /*Genera el grupo de levas formadas por campesinos que se enfrentan a los enemigos
      * Tanto en el saqueo como en el arrase participa toda la población.
@@ -158,49 +165,46 @@ public class FeudoK {
      * Para el nivel de satisfacción se puede usar la misma función que para arrasar,
      * situada en pCombate. Y para moles, se puede usar la que ya tienes o la misma
      * que uso para arrasar.
-    */
+     */
 
-     public int molestiaArrase(int arrasado)
-    {             
+    public int molestiaArrase(int arrasado) {
         //Calculamos los meses en los que los campesinos se tienen que alimentar con la producción arrasada.
-        int acosechas=mesesEntreCosechas();
+        int acosechas = mesesEntreCosechas();
         //Obtenemos el consumo correspondiente
-        int consumo=poblacion*acosechas*31;
-        
+        int consumo = poblacion * acosechas * 31;
+
         //Calculamos los campesinos molestos
-        int campis=(int)(Math.round(satisfaccionArrase()*campesinos*((double)(arrasado))/(double)(consumo)));
-       
-        return  Math.min(campesinos, campis);
+        int campis = (int) (Math.round(satisfaccionArrase() * campesinos * ((double) (arrasado)) / (double) (consumo)));
+
+        return (int) Math.min(campesinos, campis);
     }
+
     //Nos da el periodo entre las próximas cosechas y las siguientes
-     public int mesesEntreCosechas()
-     {
-         int periodo=0;
-         if((mes>=4)&&(mes<=8))
-         {
-             periodo=8;
-         }else
-         {
-             periodo=4;
-         }
-         return periodo;
-     }
-     //Nos da los meses que faltan hasta las próximas cosechas.
-    public int mesesAcosechas()
-    {
-        int meses=0;
-        if(mes>=8){
-            meses=16-mes;
-        }else
-        {
-            if(mes<4)
-            {
-                meses=4-mes;
-            }else
-            {
-                meses=8-mes;
+    public int mesesEntreCosechas() {
+        int periodo = 0;
+        if ((mes >= 4) && (mes <= 8)) {
+            periodo = 8;
+        } else {
+            periodo = 4;
+        }
+        return periodo;
+    }
+
+    //Nos da los meses que faltan hasta las próximas cosechas.
+    public int mesesAcosechas() {
+        int meses = 0;
+        if (mes >= 8) {
+            meses = 16 - mes;
+        } else {
+            if (mes < 4) {
+                meses = 4 - mes;
+            } else {
+                meses = 8 - mes;
             }
         }
         return meses;
     }
+
+    
+
 }
