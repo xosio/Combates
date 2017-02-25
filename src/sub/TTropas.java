@@ -18,6 +18,7 @@ public enum TTropas {
     
     CAMPESINOS(4,1,0, true, true,0),
     LEVAS(10,1,0, true, true,300),
+    BALLESTEROS(5,1,50,true,true,1000),
     SOLDADOS(5,1,50, true, true,3000),
     ARQUEROS(5,1,50, true, true,1000),
     LANCEROS(5,1,50,true, true,1000),
@@ -49,7 +50,7 @@ public enum TTropas {
         this.apie=apie;
         this.poderarrasar=poderarrasar;
     }
-     
+    
     /*public  double  getPoder() {
         return poder;
     }*/

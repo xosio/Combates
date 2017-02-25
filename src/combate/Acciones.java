@@ -55,6 +55,8 @@ public class Acciones {
     protected String mensaje3 = null;
     //Operacion
     protected String operacion;
+    //Constructor
+    public Acciones(){}
 
     public Map<TTropas, Integer> getBajasA() {
         return bajasA;
@@ -609,5 +611,11 @@ public class Acciones {
         //Sobreescribir para SAQUEOS Y ARRASES
         exito = true;
     }
+    
+    //Funciones para reescribir en Asalto
+   public GrupoTropas formacionEscalasyTasalto(GrupoTropas ataca, boolean conTorre)
+   { return null;}
+    
+    public void condicionVictoriaAsalto(double ataque, double defensa){}
 
 }

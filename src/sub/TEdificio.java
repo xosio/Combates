@@ -15,7 +15,8 @@ public enum TEdificio {
     NADA,
     TORRE,
     CASTILLO,
-    FORTALEZA;
+    FORTALEZA,
+    CIUDAD;
     
     private int conservacion; //Estado de conservación del edificio sobre 100
     private boolean portonabierto; //Indica si el porton está abierto o cerrado

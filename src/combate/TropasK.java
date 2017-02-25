@@ -16,7 +16,7 @@ public class TropasK
    
    //Los siguientes datos se obtienen de la base de datos: 
    
-   private final int cantidad; //Cantidad de tropas
+   private int cantidad; //Cantidad de tropas
    private final int moral; //Moral de las tropas
    private final int pericia;//Pericia 
    private final int cargaviveres;//Capacidad de carga de viveres de las unidades
@@ -42,6 +42,10 @@ public class TropasK
    {
        return cantidad;
    }
+   void setcantidad(int cantidad)
+   {
+       this.cantidad=cantidad;
+   }
    
    public int getmoral()
    {
@@ -60,6 +64,10 @@ public class TropasK
 /************************ Funciones   ***************************************/   
    
  
+   public TropasK copia()
+   {
+       return new TropasK(cantidad, moral, pericia, cargaviveres, cargaoros);
+   }
    public double getPoder()
    {
        return 0.0001*(1+moral)*pericia;

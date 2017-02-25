@@ -81,8 +81,96 @@ public class GrupoTropas {
         }
         return false;
     }
-
-    /**
+   public TropasK getTK(String nombre)
+    {
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
+        {
+            if (elemento.getKey().toString().equals(nombre)){
+                return elemento.getValue();
+            }
+        }
+        return null;
+    }
+   //Función que nos dice si una unidad es a distancia
+   public boolean adistancia(String nombre)
+    {
+        if ((nombre=="ARQUEROS")||(nombre=="BALLESTEROS")){
+                return true;
+            }
+        return false;
+    }
+   
+   public TTropas getTT(String nombre)
+    {
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
+        {
+            if (elemento.getKey().toString().equals(nombre)){
+                return elemento.getKey();
+            }
+        }
+        return null;
+    }
+   /**
+    * ****************Asaltos*****************************************
+    */
+   /*
+   *  Da el poder de las unidades cuando asaltan un edificio.
+   *  El poder no depende del tipo de edificio ni del terreno.
+   */
+    public double getAtaqueEscalas(boolean conTorre) {
+        double poder = 0.0;
+        pAsaltoK p =pAsaltoK.TORRE;
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            if(conTorre){
+                poder=poder+elemento.getValue().getPoderUnidades()*p.poderTAsalto(elemento.getKey());
+            }
+            else{
+                poder=poder+elemento.getValue().getPoderUnidades()*p.poderEscalas(elemento.getKey());
+            }
+        }
+        return poder;
+    }
+    //Esta función nos da el poder de las unidades a distancia que disparan desde 
+    // la base del edificio.
+    public double getPoderArqueros()
+    {
+        double poder=0.0;
+        //Las unidades a distancia disparan desde abajo
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
+        {
+            if (adistancia(elemento.getKey().toString())){
+                poder=poder+elemento.getValue().getPoderUnidades();
+            }
+        } 
+        return poder;
+    }
+   /*
+    * Dado un grupo de tropas devuelve otro formado solo por las unidades a distancia
+    */
+    GrupoTropas formacionAdistancia(){
+        Map<TTropas, TropasK> grupoat = new HashMap();
+        GrupoTropas gasalto=new GrupoTropas(grupoat,false,false);
+        
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
+        {
+            String nombre=elemento.getKey().toString();
+            if (adistancia(nombre)){
+                grupoat.put(this.getTT(nombre),this.getTK(nombre).copia());
+            }
+        }         
+        return gasalto;
+    }
+    
+    public double defensaGuarnicion(pAsaltoK p, int conservacion){
+        double defensa=0.0;
+        double conservacionEd=0.01*conservacion; //ya que conservación es sobre 100
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            defensa=defensa+elemento.getValue().getPoderUnidades()*p.defensaGuarnicion(elemento.getKey(),
+                    conservacionEd);
+        }
+        return defensa;
+    }
+        /**
      * ************************************* Combates *********************
      */
     
