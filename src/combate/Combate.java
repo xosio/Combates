@@ -65,23 +65,25 @@ public class Combate {
         /** GRUPO DE ATAQUE**/
         Map<TTropas, TropasK> grupoat = new HashMap();
        //Arqueros
-        grupoat.put(TTropas.ARQUEROS, new TropasK(100, 100, 100,0,0));
+        grupoat.put(TTropas.ARQUEROS, new TropasK(100, 100, 100,0,0, false));
         //Ballesteros
         //grupoat.put(TTropas.BALLESTEROS, new TropasK(800, 100, 100,0,0));
         //Caballeros
         //Para deputación: Si no queremos que hayan tropas de un tipo NO ponerlas el Map...!!!!!!!!!!!!!!
-        grupoat.put(TTropas.CABALLEROS, new TropasK(80, 100, 100,0,0));
+        grupoat.put(TTropas.CABALLEROS, new TropasK(80, 100, 100,0,0, false));
         
         //Lanceros
         //grupoat.put(TTropas.LANCEROS, new TropasK(8, 100, 100,0,0));
        
         //Levass
-        grupoat.put(TTropas.LEVAS, new TropasK(50, 100, 100,0,0));
+        grupoat.put(TTropas.LEVAS, new TropasK(50, 100, 100,0,0, false));
         //Soldados
-        grupoat.put(TTropas.SOLDADOS, new TropasK(50, 100, 100,0,0));
+        grupoat.put(TTropas.SOLDADOS, new TropasK(80, 100, 100,0,0, false));
 
         //Escalas
-        grupoat.put(TTropas.ESCALAS, new TropasK(10, 100, 100,0,0));
+        grupoat.put(TTropas.ESCALAS, new TropasK(10, 100, 100,0,0, false));
+        //Torres de asalto
+        grupoat.put(TTropas.TASALTO, new TropasK(2, 100, 100,0,0, false));
     //Los parámetros en retirada y en movimiento. Para que sirven????
         GrupoTropas at = new GrupoTropas(grupoat, false, false);
 
@@ -89,7 +91,7 @@ public class Combate {
         Map<TTropas, TropasK> grupodef = new HashMap();
         
         //Arqueros
-        grupodef.put(TTropas.ARQUEROS, new TropasK(80, 100, 100,0,0));
+        grupodef.put(TTropas.ARQUEROS, new TropasK(20, 100, 100,0,0, false));
         //Caballeros
         //Para depuración: Si no hay tropas de un tipo NO ponerlas el Map...!!!!!!!!!!!!!!
         //grupodef.put(TTropas.CABALLEROS, new TropasK(80, 100, 100,0,0););

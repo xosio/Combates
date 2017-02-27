@@ -21,23 +21,29 @@ public class TropasK
    private final int pericia;//Pericia 
    private final int cargaviveres;//Capacidad de carga de viveres de las unidades
    private final int cargaoros; //Capacidad de carga de oros de las unidades
+   private final boolean bloqueado;//Para la maquinaria de asedio en montaje
    
 /******************************** Constructores *****************/   
   
     //Constructor 
    
-    TropasK(int cantidad, int moral, int pericia, int cargaviveres, int cargaoros)
+    TropasK(int cantidad, int moral, int pericia, int cargaviveres, int cargaoros,
+            boolean bloqueado)
    {
        this.cantidad=cantidad;
        this.moral=moral;
        this.pericia=pericia;
        this.cargaviveres=cargaviveres;
        this.cargaoros=cargaoros;
+       this.bloqueado=bloqueado;
    }
    
 /******************* Métodos getter y setter***************************************/
    
-    
+   public boolean getBloqueado()
+   {
+       return bloqueado;
+   }
    public int getcantidad()
    {
        return cantidad;
@@ -66,7 +72,7 @@ public class TropasK
  
    public TropasK copia()
    {
-       return new TropasK(cantidad, moral, pericia, cargaviveres, cargaoros);
+       return new TropasK(cantidad, moral, pericia, cargaviveres, cargaoros, bloqueado);
    }
    public double getPoder()
    {

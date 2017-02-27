@@ -55,6 +55,7 @@ public class Acciones {
     protected String mensaje3 = null;
     //Operacion
     protected String operacion;
+    protected boolean portonabierto;
     //Constructor
     public Acciones(){}
 
@@ -102,6 +103,14 @@ public class Acciones {
         this.exito = exito;
     }
 
+    public boolean getPortonAbierto()
+    {
+        return portonabierto;
+    }
+    public void setPortonAbierto(boolean abrir)
+    {
+        portonabierto=abrir;
+    }
     /**
      * Ataque de tropas "ataca" sobre tropas "defiende" en el terreno/lugar p.
      *
@@ -368,14 +377,80 @@ public class Acciones {
             }
         }
     }
-
+    
+    /*
+    *  Encapsulo el cálculo de las bajas, pues es repetitivo y me sirve para el asalto
+    */
+    public void calculaBajas(Map<TTropas, Double> poderA, double rba,
+            double auxD, pAsaltoK p, GrupoTropas tropas, String caso, int conservacionEd)
+    {
+        double conservacion=0.01*conservacionEd;
+        //Calculamos el poder de las bajas de cada bando
+        for (Map.Entry<TTropas, Double> elemento : poderA.entrySet()) {
+            TTropas tipotropas = elemento.getKey();
+            double poderAi = elemento.getValue()* auxD * rba;
+            double bajasAi=0.0;
+            //Calculamos las bajas
+            switch(caso){
+                case "ASALTO":
+                    bajasAi = poderAi / tropas.getDefensaAsalto(tipotropas,
+                            conservacion, p, caso);
+                    ponBajas(bajasA, tipotropas, redondea(bajasAi));
+                    break;
+                case "ESCALAS":
+                    bajasAi = poderAi / tropas.getDefensaAsalto(tipotropas, 
+                            conservacion, p, caso);
+                    ponBajas(bajasA, tipotropas, redondea(bajasAi));
+                    break;
+                case "TASALTO":
+                    bajasAi = poderAi / tropas.getDefensaAsalto(tipotropas, 
+                            conservacion, p, caso);
+                    ponBajas(bajasA, tipotropas, redondea(bajasAi));
+                    break;
+                case "ADISTANCIA":
+                    bajasAi = poderAi / tropas.getDefensaAsalto(tipotropas,
+                            conservacion, p, caso);
+                    ponBajas(bajasA, tipotropas, redondea(bajasAi));
+                    break;
+                case "GUARNICION":
+                    bajasAi = poderAi / tropas.getDefensaAsalto(tipotropas,
+                            conservacion, p, caso);
+                    ponBajas(bajasD, tipotropas, redondea(bajasAi));
+                    break;
+                default:
+                    return;
+            }
+        }
+    }
+    
+    public double sumaMap(Map<TTropas, Double> mapa)
+    {
+        double suma=0.0;
+        for (Map.Entry<TTropas, Double> elemento : mapa.entrySet()) {
+            double poderAi = elemento.getValue();
+            suma = suma + poderAi;
+        }
+        return suma;
+    }
+    
+    public void aniquila(GrupoTropas grupo, boolean ataca)
+    {
+        for (Map.Entry<TTropas, TropasK> u : grupo.getUnidad().entrySet()) {
+            if(ataca){
+                ponBajasAtacante(u.getKey(), u.getValue().getcantidad());
+            }
+            else{
+                ponBajasDefensor(u.getKey(), u.getValue().getcantidad());
+            }
+        }
+    }
     /**
      * Redondea las bajas obtenidas en el combate, cuando es mayor al 30%.
      *
      * @param num
      * @return numero entero redondeado
      */
-    private int redondea(double num) {
+    public int redondea(double num) {
         int sol = (int) (num);
         if (num - sol < 0.3) {
             return sol;
@@ -387,7 +462,8 @@ public class Acciones {
     public void escribeBajas(Reporte reporte) {
         //Atacantes...
         for (Map.Entry<TTropas, Integer> elemento : bajasA.entrySet()) {
-            reporte.ponBajasatacante(elemento.getKey(), elemento.getValue());
+            reporte.ponBajasAtacante(elemento.getKey(), elemento.getValue());
+            System.out.println(elemento.getKey()+" "+elemento.getValue());
         }
         //Defensores...
         for (Map.Entry<TTropas, Integer> elemento : bajasD.entrySet()) {
@@ -487,7 +563,7 @@ public class Acciones {
     }
 
     //Igual pero genérico.
-    private void ponBajas(Map<TTropas, Integer> bajas, TTropas tr, int cantidad) {
+    protected void ponBajas(Map<TTropas, Integer> bajas, TTropas tr, int cantidad) {
         if (bajas.containsKey(tr)) {
             int bj = bajas.get(tr);
             cantidad = bj + cantidad;
@@ -553,7 +629,7 @@ public class Acciones {
         if (campisresistentes > 0) {
 
             //Creamos el grupo de tropas....ncampesions a 100 de pericia y moral.
-            TropasK campis = new TropasK(campisresistentes, 100, 100, 0, 0);
+            TropasK campis = new TropasK(campisresistentes, 100, 100, 0, 0, false);
             Map<TTropas, TropasK> campesinos = new HashMap();
             campesinos.put(TTropas.CAMPESINOS, campis);
             GrupoTropas defensores = new GrupoTropas(campesinos, false, false);
@@ -588,7 +664,7 @@ public class Acciones {
             for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
                 unidad1.put(elemento.getKey(), elemento.getValue());
             }
-            TropasK campis = new TropasK(campesinos, 100, 100, 0, 0);
+            TropasK campis = new TropasK(campesinos, 100, 100, 0, 0,false);
             unidad1.put(TTropas.CAMPESINOS, campis);
             GrupoTropas defensor = new GrupoTropas(unidad1, false, false);
             atacar(ataca, defensor, p);
@@ -613,9 +689,8 @@ public class Acciones {
     }
     
     //Funciones para reescribir en Asalto
-   public GrupoTropas formacionEscalasyTasalto(GrupoTropas ataca, boolean conTorre)
-   { return null;}
     
-    public void condicionVictoriaAsalto(double ataque, double defensa){}
-
+   public void asaltoEscalasTorres(GrupoTropas ataca, GrupoTropas defiende, 
+           FeudoK feudo){}
+    
 }

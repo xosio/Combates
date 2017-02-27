@@ -20,48 +20,141 @@ import sub.TTropas;
 */
 public class Asalto extends Acciones
 {  
-    private boolean portonabierto;
+    
+    private final int nmaxplomosTasalto=5;
     private final int capacidadescalas=50;
-    private final int capacidadtorres=200;
+    private final int capacidadtasalto=200;
     private final String[] prioridad={"LEVAS","SOLDADOS","LANCEROS","BALLESTEROS","ARQUEROS"};
    //Constructor
     public Asalto(){
-        this.setOperacion("ASALTAR");
+        operacion="ASALTAR";
     }
-    
-    public void escalas(GrupoTropas ataca, GrupoTropas defiende, FeudoK feudo)
+    /*
+    * 
+    */
+    @Override
+    public void asaltoEscalasTorres(GrupoTropas ataca, GrupoTropas defiende, FeudoK feudo)
     {
-        double poderAt=0.0;
-        double defensaDe=0.0;
-        //Obtenemos un grupoTropas con las unidades que suben por las escalas
-        GrupoTropas grupoasalto=formacionEscalasyTasalto(ataca,false);
-        //Obtenemos el grupo de las unidades adistancia que disparan desde abajo
-        GrupoTropas adistancia=ataca.formacionAdistancia();
-        //Obtenemos el poder de las tropas que atacan
-        poderAt=poderAt+grupoasalto.getAtaqueEscalas(false)+adistancia.getPoderArqueros();
-        //Obtenemos el poder defensivo de las unidades que defienden     
+        pAsaltoK pasalto=pAsaltoK.valueOf(feudo.getTEdificio().toString());
+        GrupoTropas grupotasalto=new GrupoTropas(); //Para las unidades que suben por las torres
+        Map<TTropas, Double> poderTasalto =  new HashMap();
+        GrupoTropas grupoescalas=new GrupoTropas();// PAra las unidades que suben por las escalas
+        Map<TTropas, Double> poderEscalas =  new HashMap();
+        GrupoTropas grupoadistancia;//Para las unidades que disparan desde abajo
+        Map<TTropas, Double> poderAdistancia;
+        
+        int conservacion=feudo.getTEdificio().getConservacion();
+        Map<TTropas, Double> poderGuarnicion =  defiende.getPoderAsalto("GUARNICION", pasalto, conservacion);               
+                                        
+        //Empezamos con las torres de asalto
+        if(ataca.tiene("TASALTO")){
+            int ntasalto=ataca.getCantidadTipoTropa(TTropas.TASALTO);
+            
+            //Enfrentamos las catapultas defensivas a las torres.
+            if(feudo.getTEdificio().getCdefensivas()>0){
+               int ncatdefensivas=feudo.getTEdificio().getCdefensivas();               
+               ntasalto=catapultasDefATasalto(ncatdefensivas, ntasalto);
+               //Actualizamos el número de torres de asalto que quedan
+               ataca.getTK("TASALTO").setcantidad(ntasalto);
+            }
+            //Obtenemos la cantidad de tropas que suben
+            grupotasalto=formacionEscalasyTasalto(ataca,true);
+            
+            //Enfrentamos las torres a los plomos
+            if(feudo.getTEdificio().getPlomos()>0){
+                //Obtenemos la cantidad de torres rotas y las bajas producidas
+                plomosATasalto(feudo.getTEdificio().getPlomos(),ntasalto, grupotasalto);                        
+                }
+                //Obtenemos el poder de las tropas que suben por las torres
+                poderTasalto=grupotasalto.getPoderAsalto("TASALTO", pasalto, conservacion);
+            }
+      
+            //Si quedan tropas por subir y hay escalas.
+            if((ataca.tiene("ESCALAS"))&&(ataca.hayUnidadesApie())){
+                grupoescalas=formacionEscalasyTasalto(ataca,false);
+                //Obtenemos el poder de las tropas que suben por las escalas
+                poderEscalas=grupoescalas.getPoderAsalto("ESCALAS", pasalto, conservacion);
+            }
+       
+            //Obtenemos las unidades a distancia que disparan desde abajo
+            grupoadistancia=formacionAdistancia(ataca);
+            poderAdistancia=grupoadistancia.getPoderAsalto("ADISTANCIA", pasalto, conservacion);
+                        
+            //Ejecutamos el ataque con los poderes pertinentes.
+            double poderAt=sumaMap(poderTasalto)+sumaMap(poderEscalas)+
+                    sumaMap(poderAdistancia);
+            double defensaDe=defiende.defensaGuarnicion(pasalto, conservacion);
   
-        //Si el atacante obtiene la victoria abren el portón.
-         condicionVictoriaAsalto(poderAt,defensaDe);                             
-        //Obtenemos la cantidad de escalas que se pierden, según la condición de victoria
-        if(victoriataca){
-            //Se rompen un 10% de las escalas, mínimo una
+            //Obtenemos la condición de victoria para el combate
+            double auxA=condicionVictoriaAsalto(poderAt,defensaDe);
+            double auxD=1.0-auxA;
+                
+            //Obtenemos la reducción de bajas para cada bando
+            double rba=pasalto.getRBajasAt(victoriataca);
+            double rbd=pasalto.getRBajasGuar(victoriadefensor);
+                
+            //Calculamos las bajas...
+            //En primer lugar escribimos en acciones las escalas rotas.
+            destruyeEscalas(ataca.getCantidadTipoTropa(TTropas.ESCALAS));
+            
+            if(aniquilaataca){
+                aniquila(grupotasalto, true);
+                aniquila(grupoescalas, true);
+                aniquila(grupoadistancia, true);
+            }
+            else{
+                calculaBajas(poderTasalto, rba, auxD, pasalto, grupotasalto, "TASALTO", conservacion);            
+                calculaBajas(poderEscalas, rba, auxD, pasalto, grupoescalas, "ESCALAS", conservacion); 
+                calculaBajas(poderAdistancia, rba, auxD, pasalto, grupoadistancia, "ADISTANCIA", conservacion);   
+            }
+            if(aniquiladefensor)
+            {
+                aniquila(defiende, false);
+            }
+            else{
+                calculaBajas(poderGuarnicion, rbd, auxA, pasalto, defiende, "GUARNICION", conservacion);
+            } 
+                        
+    }
+    /*
+    * Dado un grupo de tropas devuelve otro formado solo por las unidades a distancia
+    */
+    GrupoTropas formacionAdistancia(GrupoTropas grupo){
+        Map<TTropas, TropasK> grupoat = new HashMap();
+        GrupoTropas gasalto=new GrupoTropas(grupoat,false,false);
+        
+        for (Map.Entry<TTropas, TropasK> elemento : grupo.getUnidad().entrySet()) 
+        {
+            TTropas tr=elemento.getKey();
+            if (tr.isAdistancia()){
+                grupoat.put(tr,elemento.getValue().copia());
+            }
+        }         
+        return gasalto;
+    }
+    //Obtenemos la cantidad de escalas que se pierden, según la condición de victoria       
+    public void destruyeEscalas(int escalas)
+    {    
+        int escalasrotas=0;
+        if((victoriataca)&&(portonabierto)){
+            //Se rompen un 10% de las escalas.
+            escalasrotas=redondea(0.1*escalas);
         }
         else{
             if((huyeataca)||(mueveataca)||(aniquilaataca)){
-                //Se rompen todas
+                escalasrotas=escalas;//Se rompen todas
             }
             else{
                 //Se rompen entre un 30 y un 70 %
+                escalasrotas=redondea(0.3*escalas+0.4*escalas*Math.random());
             }
         }
-        //Obtenemos las bajas del combate
-        
+        ponBajas(getBajasA(), TTropas.ESCALAS , escalasrotas);
     }
     /*
     * Función que calcula las condiciones de victoria para cualquier tipo de asalto
     */
-    public void condicionVictoriaAsalto(double ataque, double defensa){
+    public double condicionVictoriaAsalto(double ataque, double defensa){
         double aux=ataque/(ataque+defensa);
         
         if(ataque>defensa){
@@ -80,7 +173,7 @@ public class Asalto extends Acciones
             }                      
         }
         else{
-            //Gana el grupo que defiende, en caso de empoate le damos la ventaja al defensor
+            //Gana el grupo que defiende, en caso de empate le damos la ventaja al defensor
             victoriadefensor=true;
             if(aux<=0.02){
                 //Aniquilación del atacante
@@ -99,6 +192,7 @@ public class Asalto extends Acciones
                 }
             }
         }
+        return aux;
     }
     /*
     *  Función que calcula el GrupoTropas que sube por las escalas o torres de asalto
@@ -109,7 +203,7 @@ public class Asalto extends Acciones
         GrupoTropas gasalto=new GrupoTropas(grupoat,false,false);
         int nmax;
         if(torres){
-            nmax=ataca.getCantidadTipoTropa(TTropas.TASALTO)*capacidadtorres;
+            nmax=ataca.getCantidadTipoTropa(TTropas.TASALTO)*capacidadtasalto;
         }
         else{
             nmax=ataca.getCantidadTipoTropa(TTropas.ESCALAS)*capacidadescalas;             
@@ -140,15 +234,58 @@ public class Asalto extends Acciones
         return gasalto;
     }
     //
-    
-    
-    
-    public boolean getPortonAbierto()
+    /*
+    *  Función que desarrolla el disparo de las catapultas defensivas a las
+    *  torres de asalto en su aproximación al edificio.
+    *  Devuelve el número de torres de asalto que quedan.
+    */
+    public int catapultasDefATasalto(int ncatapultas, int ntasalto)
     {
-        return portonabierto;
-    }
+        double bajas=(0.1+Math.random()*0.3)*ncatapultas;
+        int tasaltorotas=0;
             
-          
+        if(bajas>=ntasalto){
+            tasaltorotas=ntasalto;
+        }
+        else{
+            tasaltorotas=redondea(bajas);
+        }
+        
+        ponBajas(getBajasA(), TTropas.TASALTO , tasaltorotas);    
+        return  (ntasalto-tasaltorotas);
+    }
+    /*
+    *  Función que calcula el número de torres que rompen los plomos
+    *  devuelve los plomos usados
+    */
+    public void plomosATasalto(int plomos, int ntasalto, GrupoTropas grupo)
+    {
+        int nplomos=Math.min(plomos,nmaxplomosTasalto*ntasalto);
+        double bajas=nplomos*(0.05+0.1*Math.random()); 
+        int tasaltorotas=redondea(bajas);
+
+        ponBajas(getBajasA(), TTropas.TASALTO , tasaltorotas); 
+        
+        //Obtenemos ahora el daño producido a las tropas
+        bajas=capacidadtasalto*(nplomos*(0.05+0.05*Math.random())+0.3*Math.random()*tasaltorotas);
+        int nbajas=redondea(bajas);
+        
+        double porcentaje=(double)(nbajas)/(double)(grupo.getCantidadTropas());
+        
+        for (Map.Entry<TTropas, TropasK> elemento : grupo.getUnidad().entrySet()) {
+            TTropas tr = elemento.getKey();
+            TropasK tk = elemento.getValue();
+            int cantidad=tk.getcantidad();
+            int mueren=redondea(cantidad*porcentaje);
+            
+            //Actualizamos las unidades
+            tk.setcantidad(cantidad-mueren);
+            //Añadimos las bajas a la lista
+            ponBajas(getBajasA(), tr , mueren);
+        }
+    }
+    
+        
     //Función que dada un GrupoTropas y los plomos del enemigo devuelve el GrupoTropas con 
     //las unidades que suben por las torres en el asedio, descontando las bajas que producen los plomos
    /* 
@@ -481,6 +618,7 @@ public class Asalto extends Acciones
         reporte.setMoveratacante(mueveataca);
         reporte.setMoverdefensor(muevedefensor);
         reporte.setVictoriasobrecampis(victoriasobrecampis);
+        
         reporte.setExito(exito);
         reporte.setMensaje1(mensaje1);
         reporte.setMensaje2(mensaje2);

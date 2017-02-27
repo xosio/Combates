@@ -27,7 +27,7 @@ public class GrupoTropas {
      * *****************
      * Constructores********************************************
      */
-   
+    GrupoTropas(){}
 
     GrupoTropas(Map<TTropas, TropasK> unidad, boolean enretirada, boolean enmovimiento)
     {
@@ -117,58 +117,77 @@ public class GrupoTropas {
    *  Da el poder de las unidades cuando asaltan un edificio.
    *  El poder no depende del tipo de edificio ni del terreno.
    */
-    public double getAtaqueEscalas(boolean conTorre) {
-        double poder = 0.0;
-        pAsaltoK p =pAsaltoK.TORRE;
-        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
-            if(conTorre){
-                poder=poder+elemento.getValue().getPoderUnidades()*p.poderTAsalto(elemento.getKey());
-            }
-            else{
-                poder=poder+elemento.getValue().getPoderUnidades()*p.poderEscalas(elemento.getKey());
-            }
-        }
-        return poder;
-    }
-    //Esta función nos da el poder de las unidades a distancia que disparan desde 
-    // la base del edificio.
-    public double getPoderArqueros()
-    {
-        double poder=0.0;
-        //Las unidades a distancia disparan desde abajo
-        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
-        {
-            if (adistancia(elemento.getKey().toString())){
-                poder=poder+elemento.getValue().getPoderUnidades();
-            }
-        } 
-        return poder;
-    }
-   /*
-    * Dado un grupo de tropas devuelve otro formado solo por las unidades a distancia
-    */
-    GrupoTropas formacionAdistancia(){
-        Map<TTropas, TropasK> grupoat = new HashMap();
-        GrupoTropas gasalto=new GrupoTropas(grupoat,false,false);
+    Map<TTropas, Double> getPoderAsalto(String caso, pAsaltoK p, int conservacionEd) {
         
-        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) 
-        {
-            String nombre=elemento.getKey().toString();
-            if (adistancia(nombre)){
-                grupoat.put(this.getTT(nombre),this.getTK(nombre).copia());
+        Map<TTropas, Double> sol = new HashMap();
+        double conservacion=0.01*conservacionEd;
+        
+        for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
+            
+            TTropas tipotropa = elemento.getKey();
+            TropasK u = elemento.getValue();
+            double poder;
+            poder = u.getPoderUnidades();
+            double fuerzaAtaque;
+            switch(caso){ 
+                case "ASALTO":
+                    fuerzaAtaque=p.poderAsalto(tipotropa);
+                    break;
+                case "ADISTANCIA":
+                    fuerzaAtaque=p.poderAdistancia(tipotropa);
+                    break;
+                case "ESCALAS":
+                    fuerzaAtaque=p.poderEscalas(tipotropa);
+                    break;
+                case "TASALTO":
+                    fuerzaAtaque = p.poderTAsalto(tipotropa);
+                    break;
+                case "GUARNICION":
+                    fuerzaAtaque=p.poderGuarnicion(tipotropa, conservacion);
+                    break;
+                default:
+                        fuerzaAtaque=0.0;
             }
-        }         
-        return gasalto;
+                poder = poder * fuerzaAtaque;
+                sol.put(tipotropa, poder);   
+        }
+        return sol;
     }
     
     public double defensaGuarnicion(pAsaltoK p, int conservacion){
         double defensa=0.0;
         double conservacionEd=0.01*conservacion; //ya que conservación es sobre 100
         for (Map.Entry<TTropas, TropasK> elemento : unidad.entrySet()) {
-            defensa=defensa+elemento.getValue().getPoderUnidades()*p.defensaGuarnicion(elemento.getKey(),
-                    conservacionEd);
+            TTropas tr=elemento.getKey();
+            TropasK tk=elemento.getValue();
+            defensa=defensa+tk.getcantidad()*getDefensaAsalto(tr, conservacionEd, p, "GUARNICION");
         }
         return defensa;
+    }
+    
+    double getDefensaAsalto(TTropas tipotropa, double conservacion, pAsaltoK p, String caso) {
+        //Multiplicamos la pericia, la moral y el poder de defensa en el terreno
+        
+         if (unidad.containsKey(tipotropa)) {
+            TropasK tr=unidad.get(tipotropa);
+            switch(caso){
+                case "ASALTO":
+                    return tr.getPoder()*p.defensaAsalto(tipotropa);
+                case "ADISTANCIA":
+                    return tr.getPoder()*p.defensaAdistancia(tipotropa);
+                case "ESCALAS":
+                    return tr.getPoder()*p.defensaEscalas(tipotropa);
+                case "TASALTO":
+                    return tr.getPoder()*p.defensaTAsalto(tipotropa);
+                case "GUARNICION":
+                    return tr.getPoder()*p.defensaGuarnicion(tipotropa, conservacion);
+                default:
+                    return 0.0;
+            }     
+        }
+        else {
+            return 0.0;
+        }   
     }
         /**
      * ************************************* Combates *********************
