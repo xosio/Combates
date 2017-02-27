@@ -119,7 +119,7 @@ public class Reporte {
     }
 
     /* *************** Bajas      ********************/
-    void ponBajasatacante(TTropas tr, int bajas) {
+    void ponBajasAtacante(TTropas tr, int bajas) {
         if (bajasatacanteX.containsKey(tr)) {
             int bj = bajasatacanteX.get(tr);
             bajas = bj + bajas;
@@ -139,7 +139,7 @@ public class Reporte {
     public void escribeBajas(Map<TTropas, Integer> bajasA, Map<TTropas, Integer> bajasD) {
         //Atacantes...
         for (Map.Entry<TTropas, Integer> elemento : bajasA.entrySet()) {
-            ponBajasatacante(elemento.getKey(), elemento.getValue());
+            ponBajasAtacante(elemento.getKey(), elemento.getValue());
         }
         //Defensores...
         for (Map.Entry<TTropas, Integer> elemento : bajasD.entrySet()) {
@@ -265,6 +265,8 @@ public class Reporte {
     }
 
     public void completaReporte(Acciones accion) {
+        //Creo que sería interesante meter aquí 
+        //accion.escribeBajas(reporte);
         victoriaatacante = accion.victoriataca;
         victoriadefensor = accion.victoriadefensor;
 
@@ -278,6 +280,7 @@ public class Reporte {
         defensoraniquilado = accion.aniquiladefensor;
 
         campesinos = accion.campesinos;
+        abrirporton=accion.portonabierto;
 
     }
 
@@ -286,7 +289,16 @@ public class Reporte {
      */
     //Mensaje para el atacante
     void printAsalto(){
-        
+        if (!exito)//No se puede realizar la acción
+        {
+            System.out.println("Mi señor, no hemos podido ASALTAR el edificio del feudo " + coordenadas + " porque " + mensaje1);
+            return;
+        }
+        System.out.print("Mi señor, siguiendo vuestras órdenes hemos ASALTADO el edificio del feudo " + coordenadas + " ");
+        printAtaque();
+        if(abrirporton){
+            System.out.println("Mi señor, hemos conseguido abrir el portón");
+        }
     }
     void printArrasar() {
 
@@ -467,10 +479,20 @@ public class Reporte {
             case "ATACAR":
                 printAtaque();
                 return;
+            case "ASALTAR":
+                printAsalto();
+                return;
+            case "ARRASAR":
+                printArrasar();
+                return;
             case "CONQUISTAR":
                 printConquista();
                 return;
-
+            case "SAQUEAR":
+                printSaquear();
+                return;
+            default:
+                printAtaque();
         }
 
         /*

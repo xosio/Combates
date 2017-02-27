@@ -78,6 +78,8 @@ public enum pCombateK {
     }
 
     //FeudoK. Pero no sé a que se refiere el indice.
+    //El índice se refiere al nivel de satisfacción de los campesinos
+    //psrs calcular la población que atacaría
     public double getsatisfaccionarrase(int indice) {
         double satisfaccion = 1.0;
         switch (indice) {
@@ -884,5 +886,5 @@ public enum pCombateK {
         }
         return penalizacion;
     }
-
+    
 }

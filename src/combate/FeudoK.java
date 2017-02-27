@@ -62,7 +62,7 @@ public class FeudoK {
         return poblacion;
     }
 
-    public TEdificio getEdificio() {
+    public TEdificio getTEdificio() {
         return edificio;
     }
 

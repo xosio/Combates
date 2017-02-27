@@ -16,20 +16,21 @@ public enum TTropas {
     //TIPO DE TROPAS (Capcidad trasporte,unidad de consumo diaria,capacidad transporte oros, aniquilable, apie, poderarrasar)
     //Capacidad de transporte en libras. 
     
-    CAMPESINOS(4,1,0, true, true,0),
-    LEVAS(10,1,0, true, true,300),
-    SOLDADOS(5,1,50, true, true,3000),
-    ARQUEROS(5,1,50, true, true,1000),
-    LANCEROS(5,1,50,true, true,1000),
-    JINETES(20,2,50,true, false,0),
-    CABALLEROS(9,3,100,true, false,0),
-    CARRETAS(1800,4,1800,false, false,0),
+    CAMPESINOS(4,1,0, true, true,false,0),
+    LEVAS(10,1,0, true, true, false,300),
+    BALLESTEROS(5,1,50,true,true, true,1000),
+    SOLDADOS(5,1,50, true, true, false,3000),
+    ARQUEROS(5,1,50, true, true, true,1000),
+    LANCEROS(5,1,50,true, true, false,1000),
+    JINETES(20,2,50,true, false, false,0),
+    CABALLEROS(9,3,100,true, false, false,0),
+    CARRETAS(1800,4,1800,false, false, false,0),
     //A añadir: ballesteros, torres de asedio, arietes...
-    EXPLORADORES(40,2,50,true,false,0),
-    ARIETES(0,6,0,false, false,0),
-    TASALTO(0,6,0,false, false,0),
-    ESCALAS(0,6,0,false, false,0),
-    CATAPULTAS(0,6,0,false, false,0);
+    EXPLORADORES(40,2,50,true,false, false,0),
+    ARIETES(0,6,0,false, false, false,0),
+    TASALTO(0,6,0,false, false, false,0),
+    ESCALAS(0,6,0,false, false, false,0),
+    CATAPULTAS(0,6,0,false, false, false,0);
    
     
    //private final double poder; Poder: esto serían los parámetros de combate...
@@ -38,18 +39,21 @@ public enum TTropas {
     private final int oros;
     private final boolean aniquilables;
     private final boolean apie;
+    private final boolean adistancia;
     private final int poderarrasar;
     
-    TTropas(int transporte, int consumo, int oros, boolean aniquilable, boolean apie, int poderarrasar) {
+    TTropas(int transporte, int consumo, int oros, boolean aniquilable, 
+            boolean apie, boolean adistancia, int poderarrasar) {
         //this.poder=poder;
         this.transporte=transporte;
         this.consumo=consumo;
         this.oros=oros;
         this.aniquilables=aniquilable;
         this.apie=apie;
+        this.adistancia=adistancia;
         this.poderarrasar=poderarrasar;
     }
-     
+    
     /*public  double  getPoder() {
         return poder;
     }*/
@@ -74,6 +78,10 @@ public enum TTropas {
         return apie;
     }
     
+    public boolean isAdistancia()
+    {
+        return adistancia;
+    }
     //Devuelve la carga maxima de oros: EN oros !!!!!!!!!!!!!!!!
     //Y por que no pongo directamente 180.000 oros....????
     //Porque quizás pueda transportar otras cosas que no sean oros, con un límite de carga de 1800

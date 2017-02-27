@@ -5,10 +5,10 @@
 // modificación en linea
 package combate;
 
-import sub.TTropas;
 import java.util.Map;
 import sub.TCultura;
 import sub.TEdificio;
+import sub.TTropas;
 
 /**
  *
@@ -58,9 +58,7 @@ public class Contienda {
                 this.accion = null;
                 break;
             case "ASALTAR":
-                //En proceso
-                this.accion = new Acciones();
-                accion.setOperacion("ASALTAR");
+                this.accion = new Asalto();               
                 break;
         }
 
@@ -172,7 +170,7 @@ public class Contienda {
 
                 //Lo que sigue supone que las tropas que se defienden del ataque son las del propietario del feudo...
                 if (feudo.isConpropietario()) {
-                    if (!feudo.getEdificio().equals(TEdificio.NADA)) {
+                    if (!feudo.getTEdificio().equals(TEdificio.NADA)) {
                         //Hay edificio...
                         if (accion.victoriadefensor) {
                             //Hay edificio y las tropas defensoras lograrían la victoria
@@ -227,58 +225,29 @@ public class Contienda {
                 break;
 
             case "ASALTAR":
-
-                //Sin implementar
+                 /*
+                *   Hay que comprobar que está el campamento montado
+                */             
                 //En primer lugar comprobamos si hay un boquete en la muralla
                 //o si el portón está abierto, pues en ambos casos
                 //no se utilizan torres ni escalas.
-                if((feudo.getEdificio().getConservacion()<50)||
-                        (feudo.getEdificio().getPortonabierto())){
+                if((feudo.getTEdificio().getConservacion()<50)||
+                        (feudo.getTEdificio().getPortonabierto())){
                     //Realizamos el ataque con los poderes propios del edificio
                 }
                 else{
-                    if(ataca.tiene("TASALTO")){
-                        //Enfrentamos las catapultas defensivas a las torres.
-                        if(feudo.getEdificio().getCdefensivas()>0){
-                            
-                        }
-                        //Obtenemos la cantidad de tropas que suben
-                        
-                        //Enfrentamos las torres a los plomos
-                        if(feudo.getEdificio().getPlomos()>0){
-                            //Obtenemos la cantidad de torres rotas
-                            
-                            //Obtenemos las bajas producidas entre las tropas
-                            
-                        }                    
-                        //Si quedan tropas por subir comprobamos si hay escalas.
-                        
-                        //Ejecutamos el ataque con los poderes pertinentes.
-                        
-                        //Si los atacantes obtiene la victoria se abre el portón
-                        
-                        //Enviamos mensaje de portón abierto
-                        
+                    if(((((ataca.tiene("TASALTO"))&&(!ataca.getTK("TASALTO").getBloqueado())))
+                            ||(ataca.tiene("ESCALAS")))&&(ataca.hayUnidadesApie())){
+                        accion.asaltoEscalasTorres(ataca, defiende, feudo);
+                        reporte.setExito(true); 
+                        reporte.escribeBajas(accion.getBajasA(),accion.getBajasD());
+                        reporte.completaReporte(accion);
                     }
                     else{
-                        if(ataca.tiene("ESCALAS")){
-                           //Obtenemos la cantidad de soldados y levas que suben
-                           
-                           //Obtenemos el poder de las tropas que suben y los arqueros
-                           //que se acercan para disparar desde abajo
-                           
-                           //Si el atacante obtiene la victoria abren el portón.
-                           
-                           //Enviamos menaje de portón abierto.
-                           
-                           //Obtenemos la cantidad de escalas que se pierden, según la condición de victoria
-                           
-                        }
-                        else{
-                            accion.setMensaje1("No es posible asaltar el edificio, tendremos que debilitar la muralla o adquirir maquinaria de asedio");
-                            return reporte;
-                        }
-                    }
+                        accion.setMensaje1("No es posible asaltar el edificio, tendremos que debilitar la muralla o adquirir maquinaria de asedio");
+                        reporte.setExito(false);
+                        return reporte;
+                    }                   
                 }
                 break;
 
@@ -314,7 +283,7 @@ public class Contienda {
                     }
                 } else {
                     //Feudo con propietario
-                    if (!feudo.getEdificio().equals(TEdificio.NADA)) {
+                    if (!feudo.getTEdificio().equals(TEdificio.NADA)) {
                         //Feudo con propietario y con edificio
                         if (defiende.conTropasCombate()) {
                             //Feudo con propietario,  con edificio y con tropas de combate
@@ -346,7 +315,7 @@ public class Contienda {
                             if (accion.victoriadefensor) {
                                 //Feudo con propietario,  sin edificio y con tropas de combate
                                 //Victoria del defensor-->se produce el ataque y se repele la ofensiva.
-                                reporte.escribeBajas(accion.getBajasA(), accion.getBajasA());
+                                reporte.escribeBajas(accion.getBajasA(), accion.getBajasD());
                                 if (accion.huyeataca || accion.aniquilaataca) {
                                     reporte.setCapturasX(ataca.capturaTropas());
                                 }
@@ -418,7 +387,7 @@ public class Contienda {
                     //Feudo con propietario...
                     if (defiende.conTropasCombate()) {
                         //Hay tropas defensivas (con capacidad de combatir)...
-                        TEdificio edificio = feudo.getEdificio();
+                        TEdificio edificio = feudo.getTEdificio();
                         if (!edificio.equals(TEdificio.NADA)) {
                             //Hay edificio
                             p = p.enFeudo(feudo);
@@ -489,7 +458,7 @@ public class Contienda {
         System.out.println("Resumen de las condiciones de la acción:");
         System.out.println("Accion: " + accion.getOperacion());
         System.out.println("Tipo de feudo: " + feudo.getTfeudo().toString());
-        System.out.println("Edificio: " + feudo.getEdificio().toString());
+        System.out.println("Edificio: " + feudo.getTEdificio().toString());
         if (feudo.isConpropietario()) {
             System.out.println("Las tropas que defienen (si las hay) son propietarias del feudo.");
         } else {
